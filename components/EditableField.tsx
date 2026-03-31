@@ -184,10 +184,11 @@ const EditableField = <T extends ElementType = 'span'>({
     );
   };
 
-  if (!shouldCheckGrammar && !isAiEnabled) return renderContent();
+  const isBlock = as === 'div' || as?.startsWith('h') || as === 'p' || as === 'li';
+  const Wrapper: any = isBlock ? 'div' : 'span';
 
   return (
-    <span className="relative group/editable block-if-block" style={{ display: as === 'div' || as?.startsWith('h') || as === 'p' || as === 'li' ? 'block' : 'inline-block' }}>
+    <Wrapper className={`relative group/editable ${isBlock ? 'block w-full' : 'inline-block'}`}>
         {renderContent()}
         <GrammarIndicator 
             isChecking={isChecking} 
@@ -252,7 +253,7 @@ const EditableField = <T extends ElementType = 'span'>({
                 </motion.div>
             )}
         </AnimatePresence>
-    </span>
+    </Wrapper>
   );
 };
 

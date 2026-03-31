@@ -4,10 +4,10 @@ import { ResumeSectionKey } from '../../types';
 import { TargetIcon, StyleIcon, SectionsIcon, TemplatesIcon } from '../icons/ThreeDIcons';
 
 interface EditorNavigationProps {
-    activeTab: 'content' | 'design' | 'match' | 'interview';
-    setActiveTab: (tab: 'content' | 'design' | 'match' | 'interview') => void;
-    activeSection: ResumeSectionKey | 'contact';
-    setActiveSection: (section: ResumeSectionKey | 'contact') => void;
+    activeTab: 'content' | 'style' | 'match' | 'interview';
+    setActiveTab: (tab: 'content' | 'style' | 'match' | 'interview') => void;
+    activeSection: ResumeSectionKey | 'contact' | 'finalize';
+    setActiveSection: (section: ResumeSectionKey | 'contact' | 'finalize') => void;
     sectionOrder: ResumeSectionKey[];
 }
 
@@ -57,6 +57,12 @@ const EditorNavigation: React.FC<EditorNavigationProps> = ({
                     icon={getSectionIcon(section)}
                 />
             ))}
+            <NavItem 
+                label="Finalize" 
+                active={activeSection === 'finalize'} 
+                onClick={() => setActiveSection('finalize')} 
+                icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+            />
         </div>
     );
 
@@ -81,16 +87,16 @@ const EditorNavigation: React.FC<EditorNavigationProps> = ({
             <div className="hidden md:block px-4 pb-2">
                 <div className="flex p-1 bg-black/20 rounded-xl mb-4">
                     <button 
-                        id="tour-edit-tab"
+                        id="tour-content-tab"
                         onClick={() => setActiveTab('content')}
                         className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all ${activeTab === 'content' ? 'bg-white text-slate-900 shadow-md' : 'text-white/70 hover:text-white'}`}
                     >
-                        Edit
+                        Content
                     </button>
                     <button 
                         id="tour-style-tab"
-                        onClick={() => setActiveTab('design')}
-                        className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all ${activeTab === 'design' ? 'bg-white text-slate-900 shadow-md' : 'text-white/70 hover:text-white'}`}
+                        onClick={() => setActiveTab('style')}
+                        className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all ${activeTab === 'style' ? 'bg-white text-slate-900 shadow-md' : 'text-white/70 hover:text-white'}`}
                     >
                         Style
                     </button>
@@ -102,11 +108,11 @@ const EditorNavigation: React.FC<EditorNavigationProps> = ({
                         Match
                     </button>
                     <button 
-                        id="tour-prep-tab"
+                        id="tour-interview-tab"
                         onClick={() => setActiveTab('interview')}
                         className={`flex-1 py-2 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-all ${activeTab === 'interview' ? 'bg-white text-slate-900 shadow-md' : 'text-white/70 hover:text-white'}`}
                     >
-                        Prep
+                        Interview Prep
                     </button>
                 </div>
             </div>
@@ -115,7 +121,7 @@ const EditorNavigation: React.FC<EditorNavigationProps> = ({
             <div className="flex-1 overflow-x-auto md:overflow-y-auto no-scrollbar py-2">
                 {activeTab === 'content' && renderContentNav()}
                 
-                {activeTab === 'design' && (
+                {activeTab === 'style' && (
                     <div className="mt-6 px-4 flex md:flex-col gap-3 overflow-x-auto md:overflow-x-visible no-scrollbar">
                         <div className="p-4 bg-white/5 rounded-2xl border border-white/10 hover:border-white/30 transition-colors cursor-pointer group shrink-0 md:shrink">
                             <StyleIcon className="w-8 h-8 mx-auto mb-2 opacity-70 group-hover:opacity-100 text-white" />
@@ -133,6 +139,17 @@ const EditorNavigation: React.FC<EditorNavigationProps> = ({
                         <TargetIcon className="scale-90 opacity-60 text-white" />
                         <p className="mt-6 text-xs font-bold text-white/70 uppercase tracking-widest text-center leading-relaxed">
                             Optimize Profile
+                        </p>
+                    </div>
+                )}
+
+                {activeTab === 'interview' && (
+                    <div className="mt-8 px-4 flex flex-col items-center">
+                        <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center border border-white/10 mb-6">
+                            <svg className="w-8 h-8 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+                        </div>
+                        <p className="text-xs font-bold text-white/70 uppercase tracking-widest text-center leading-relaxed px-4">
+                            Interview Readiness
                         </p>
                     </div>
                 )}

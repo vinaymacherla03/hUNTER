@@ -20,41 +20,45 @@ const AtsStandard: React.FC<TemplateProps> = ({ data, sectionOrder, customizatio
     color: '#000',
     textTransform: 'uppercase',
     letterSpacing: '0.05em',
-    marginBottom: '4px',
+    marginBottom: '6px',
     marginTop: '16px',
     fontWeight: 'bold',
-    borderBottom: '1px solid #000',
+    borderBottom: '1.5px solid #000',
+    paddingBottom: '1px',
   };
 
   const sections: Record<ResumeSectionKey, React.ReactNode> = {
     summary: (
       <section key="summary" className="mb-4">
-        <h2 style={sectionTitleStyle}>Summary</h2>
-        <EditableField as="p" path="summary" value={data.summary} onChange={onDataChange} className="text-black leading-normal text-[10pt] mt-1" />
+        <h2 style={sectionTitleStyle}>Profile Summary</h2>
+        <EditableField as="p" path="summary" value={data.summary} onChange={onDataChange} className="text-black leading-relaxed text-[10pt] mt-1" />
       </section>
     ),
     experience: (
       <section key="experience" className="mb-4">
-        <h2 style={sectionTitleStyle}>Experience</h2>
+        <h2 style={sectionTitleStyle}>Professional Experience</h2>
         <EditableList items={data.experience || []} path="experience" onChange={onDataChange} newItem={{ id: '', role: 'Role', company: 'Company', location: 'Location', dates: 'Dates', description: ['Achievement'] }}>
           {(exp, i) => (
-            <div key={exp.id} className="mb-4 last:mb-0">
-              <div className="flex justify-between items-baseline">
-                <div className="flex gap-1">
-                  <EditableField path={`experience[${i}].company`} value={exp.company} onChange={onDataChange} className="font-bold text-black text-[10pt]" />
-                  <span className="text-black">|</span>
-                  <EditableField path={`experience[${i}].location`} value={exp.location} onChange={onDataChange} className="text-black text-[10pt]" />
+            <div key={exp.id} className="mb-4 last:mb-0" style={{ pageBreakInside: 'avoid' }}>
+              <div className="flex gap-4">
+                <div className="w-[130px] shrink-0 text-black text-[10pt]">
+                  <EditableField path={`experience[${i}].dates`} value={exp.dates} onChange={onDataChange} className="font-bold block mb-0.5" />
+                  <EditableField path={`experience[${i}].location`} value={exp.location} onChange={onDataChange} className="text-slate-600 italic" />
                 </div>
-                <EditableField path={`experience[${i}].dates`} value={exp.dates} onChange={onDataChange} className="text-black text-[10pt] font-bold" />
+                <div className="flex-1">
+                  <div className="flex justify-between items-baseline mb-0.5 gap-4">
+                    <EditableField path={`experience[${i}].role`} value={exp.role} onChange={onDataChange} className="font-bold text-black text-[11pt] flex-1" />
+                    <EditableField path={`experience[${i}].company`} value={exp.company} onChange={onDataChange} className="font-bold text-black text-[10pt] shrink-0 text-right" />
+                  </div>
+                  <EditableList items={exp.description} path={`experience[${i}].description`} onChange={onDataChange} newItem="New achievement" className="list-disc ml-5 space-y-0.5">
+                    {(desc, di) => (
+                        <div className="text-black text-[10pt] leading-normal">
+                            <EditableField as="div" path={`experience[${i}].description[${di}]`} value={desc} onChange={onDataChange} enableMarkdown />
+                        </div>
+                    )}
+                  </EditableList>
+                </div>
               </div>
-              <EditableField path={`experience[${i}].role`} value={exp.role} onChange={onDataChange} className="italic text-black text-[10pt] block mb-1" />
-              <EditableList items={exp.description} path={`experience[${i}].description`} onChange={onDataChange} newItem="New achievement" className="list-disc ml-5 space-y-0.5">
-                {(desc, di) => (
-                    <div className="text-black text-[10pt] leading-normal">
-                        <EditableField as="div" path={`experience[${i}].description[${di}]`} value={desc} onChange={onDataChange} enableMarkdown />
-                    </div>
-                )}
-              </EditableList>
             </div>
           )}
         </EditableList>
@@ -64,10 +68,10 @@ const AtsStandard: React.FC<TemplateProps> = ({ data, sectionOrder, customizatio
       <section key="skills" className="mb-4">
         <h2 style={sectionTitleStyle}>Skills</h2>
         <div className="mt-1">
-          {data.skills.map((cat, i) => (
+          {data.skills?.map((cat, i) => (
             <div key={cat.id} className="text-[10pt] text-black leading-normal">
               <span className="font-bold uppercase text-[9pt] tracking-tight">{cat.name}: </span>
-              <span>{cat.skills.map(s => s.name).join(', ')}</span>
+              <span>{cat.skills?.map(s => s.name).join(', ')}</span>
             </div>
           ))}
         </div>
@@ -76,7 +80,7 @@ const AtsStandard: React.FC<TemplateProps> = ({ data, sectionOrder, customizatio
     education: (
         <section key="education" className="mb-4">
           <h2 style={sectionTitleStyle}>Education</h2>
-          {data.education.map((edu, i) => (
+          {data.education?.map((edu, i) => (
             <div key={edu.id} className="mb-2 last:mb-0">
               <div className="flex justify-between items-baseline">
                 <div className="flex gap-1">
@@ -91,66 +95,70 @@ const AtsStandard: React.FC<TemplateProps> = ({ data, sectionOrder, customizatio
           ))}
         </section>
     ),
-    projects: (
-        <section key="projects" className="mb-4">
+    projects: data.projects?.length ? (
+        <section key="projects" className="mb-4" style={{ pageBreakInside: 'avoid' }}>
           <h2 style={sectionTitleStyle}>Projects</h2>
-          {data.projects.map((proj, i) => (
+          {data.projects?.map((proj, i) => (
             <div key={proj.id} className="mb-3 last:mb-0">
               <div className="flex justify-between items-baseline">
                 <EditableField path={`projects[${i}].name`} value={proj.name} onChange={onDataChange} className="font-bold text-black text-[10pt]" />
                 <EditableField path={`projects[${i}].role`} value={proj.role} onChange={onDataChange} className="text-black text-[10pt] italic" />
               </div>
               <div className="text-black text-[10pt] leading-normal mt-0.5">
-                  {proj.description.join(' • ')}
+                  {proj.description?.join(' • ')}
               </div>
             </div>
           ))}
         </section>
-    ),
-    certifications: (
-        <section key="certifications" className="mb-4">
+    ) : null,
+    certifications: data.certifications?.length ? (
+        <section key="certifications" className="mb-4" style={{ pageBreakInside: 'avoid' }}>
           <h2 style={sectionTitleStyle}>Certifications</h2>
           {data.certifications?.map((cert, i) => (
             <div key={cert.id} className="text-[10pt] text-black leading-normal">
-              <span className="font-bold">{cert.name}</span> - {cert.issuer} ({cert.date})
+              <span className="font-bold">{cert.name}</span>
+              {cert.issuer && ` - ${cert.issuer}`}
+              {cert.date && ` (${cert.date})`}
             </div>
           ))}
         </section>
-    ),
-    awards: (
-        <section key="awards" className="mb-4">
+    ) : null,
+    awards: data.awards?.length ? (
+        <section key="awards" className="mb-4" style={{ pageBreakInside: 'avoid' }}>
           <h2 style={sectionTitleStyle}>Awards</h2>
           {data.awards?.map((award, i) => (
             <div key={award.id} className="text-[10pt] text-black leading-normal">
-              <span className="font-bold">{award.name}</span> - {award.issuer} ({award.date})
+              <span className="font-bold">{award.name}</span>
+              {award.issuer && ` - ${award.issuer}`}
+              {award.date && ` (${award.date})`}
             </div>
           ))}
         </section>
-    ),
-    keywords: (
-        <section key="keywords" className="mb-4">
+    ) : null,
+    keywords: data.keywords?.length ? (
+        <section key="keywords" className="mb-4" style={{ pageBreakInside: 'avoid' }}>
           <h2 style={sectionTitleStyle}>Keywords</h2>
           <div className="text-[10pt] text-black leading-normal mt-1">
             {data.keywords?.join(', ')}
           </div>
         </section>
-    )
+    ) : null
   };
 
   return (
-    <div id="resume-content" style={{ padding: marginValue }} className="bg-white font-serif selection:bg-slate-200 selection:text-black">
-      <header className="mb-6 text-center">
-        <EditableField as="h1" path="fullName" value={data.fullName} onChange={onDataChange} className="text-[18pt] font-bold text-black mb-1" />
-        <div className="flex justify-center flex-wrap gap-x-2 text-[10pt] text-black">
-            <EditableField path="contactInfo.location" value={data.contactInfo.location} onChange={onDataChange} />
+    <div id="resume-content" className="bg-white font-serif selection:bg-slate-200 selection:text-black">
+      <header className="mb-8 text-center">
+        <EditableField as="h1" path="fullName" value={data.fullName} onChange={onDataChange} className="text-[22pt] font-bold text-black mb-2" />
+        <div className="flex justify-center flex-wrap gap-x-3 text-[10pt] text-black">
+            <EditableField path="contactInfo.location" value={data.contactInfo?.location} onChange={onDataChange} />
             <span>•</span>
-            <EditableField path="contactInfo.phone" value={data.contactInfo.phone} onChange={onDataChange} />
+            <EditableField path="contactInfo.phone" value={data.contactInfo?.phone} onChange={onDataChange} />
             <span>•</span>
-            <EditableField path="contactInfo.email" value={data.contactInfo.email} onChange={onDataChange} className="text-blue-700 underline" />
-            {data.contactInfo.linkedin && (
+            <EditableField path="contactInfo.email" value={data.contactInfo?.email} onChange={onDataChange} className="text-blue-700 underline" />
+            {data.contactInfo?.linkedin && (
                 <>
                     <span>•</span>
-                    <EditableField path="contactInfo.linkedin" value={data.contactInfo.linkedin} onChange={onDataChange} className="text-blue-700 underline" />
+                    <EditableField path="contactInfo.linkedin" value={data.contactInfo?.linkedin} onChange={onDataChange} className="text-blue-700 underline" />
                 </>
             )}
         </div>

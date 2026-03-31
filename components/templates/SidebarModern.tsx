@@ -50,7 +50,7 @@ const SidebarModern: React.FC<TemplateProps> = ({ data, sectionOrder, customizat
         <h2 style={sectionTitleStyle}>Experience</h2>
         <EditableList items={data.experience || []} path="experience" onChange={onDataChange} newItem={{ id: '', role: 'Role', company: 'Company', location: 'Location', dates: 'Dates', description: ['Achievement'] }}>
           {(exp, i) => (
-            <div key={exp.id} className="mb-6 last:mb-0">
+            <div key={exp.id} className="mb-6 last:mb-0" style={{ pageBreakInside: 'avoid' }}>
               <div className="flex justify-between items-baseline mb-1">
                 <EditableField path={`experience[${i}].role`} value={exp.role} onChange={onDataChange} className="font-black text-slate-900 text-base" />
                 <EditableField path={`experience[${i}].dates`} value={exp.dates} onChange={onDataChange} className="font-bold text-slate-400 text-[10px] uppercase tracking-widest" />
@@ -73,8 +73,8 @@ const SidebarModern: React.FC<TemplateProps> = ({ data, sectionOrder, customizat
         </EditableList>
       </section>
     ),
-    projects: (
-        <section key="projects" className="mb-8">
+    projects: data.projects?.length ? (
+        <section key="projects" className="mb-8" style={{ pageBreakInside: 'avoid' }}>
           <h2 style={sectionTitleStyle}>Projects</h2>
           <EditableList items={data.projects || []} path="projects" onChange={onDataChange} newItem={{ id: '', name: 'Project', role: 'Role', description: ['Detail'] }}>
             {(proj, i) => (
@@ -84,7 +84,7 @@ const SidebarModern: React.FC<TemplateProps> = ({ data, sectionOrder, customizat
                     <EditableField path={`projects[${i}].role`} value={proj.role} onChange={onDataChange} className="text-blue-500 text-[10px] font-black" />
                 </div>
                 <div className="text-slate-600 text-xs leading-relaxed">
-                    {proj.description.map((desc, di) => (
+                    {proj.description?.map((desc, di) => (
                         <EditableField key={di} as="p" path={`projects[${i}].description[${di}]`} value={desc} onChange={onDataChange} className="mb-1" />
                     ))}
                 </div>
@@ -92,19 +92,49 @@ const SidebarModern: React.FC<TemplateProps> = ({ data, sectionOrder, customizat
             )}
           </EditableList>
         </section>
-    ),
+    ) : null,
     education: <div key="education" />,
     skills: <div key="skills" />,
-    certifications: <div key="certifications" />,
-    awards: <div key="awards" />,
-    keywords: (
-        <section key="keywords" className="mb-8">
+    certifications: data.certifications?.length ? (
+        <section key="certifications" className="mb-8" style={{ pageBreakInside: 'avoid' }}>
+          <h2 style={sectionTitleStyle}>Certifications</h2>
+          <div className="space-y-4">
+            {data.certifications?.map((cert, i) => (
+              <div key={cert.id} className="flex flex-col">
+                <span className="font-black text-slate-900 text-sm uppercase tracking-widest">{cert.name}</span>
+                <div className="flex justify-between items-center mt-1">
+                    <span className="text-blue-600 text-[10px] font-black uppercase tracking-widest">{cert.issuer}</span>
+                    <span className="text-slate-400 text-[10px] font-bold">{cert.date}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+    ) : null,
+    awards: data.awards?.length ? (
+        <section key="awards" className="mb-8" style={{ pageBreakInside: 'avoid' }}>
+          <h2 style={sectionTitleStyle}>Awards</h2>
+          <div className="space-y-4">
+            {data.awards?.map((award, i) => (
+              <div key={award.id} className="flex flex-col">
+                <span className="font-black text-slate-900 text-sm uppercase tracking-widest">{award.name}</span>
+                <div className="flex justify-between items-center mt-1">
+                    <span className="text-blue-600 text-[10px] font-black uppercase tracking-widest">{award.issuer}</span>
+                    <span className="text-slate-400 text-[10px] font-bold">{award.date}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+    ) : null,
+    keywords: data.keywords?.length ? (
+        <section key="keywords" className="mb-8" style={{ pageBreakInside: 'avoid' }}>
           <h2 style={sectionTitleStyle}>Keywords</h2>
           <div className="text-slate-600 leading-relaxed text-sm font-medium mt-2">
             {data.keywords?.join(', ')}
           </div>
         </section>
-    )
+    ) : null
   };
 
   const sidebarSections: Record<ResumeSectionKey, React.ReactNode> = {
@@ -126,11 +156,11 @@ const SidebarModern: React.FC<TemplateProps> = ({ data, sectionOrder, customizat
       <section key="skills" className="mb-8">
         <h2 style={sidebarSectionTitleStyle}>Skills</h2>
         <div className="space-y-6">
-          {data.skills.map((cat, i) => (
+          {data.skills?.map((cat, i) => (
             <div key={cat.id} className="flex flex-col">
               <EditableField path={`skills[${i}].name`} value={cat.name} onChange={onDataChange} className="font-black text-white text-[10px] uppercase tracking-[0.2em] mb-3" />
               <div className="flex flex-wrap gap-2">
-                {cat.skills.map((s, si) => (
+                {cat.skills?.map((s, si) => (
                     <span key={si} className="px-2 py-1 bg-white/10 rounded text-[10px] font-bold text-white/80 uppercase tracking-widest whitespace-nowrap">
                         {s.name}
                     </span>
@@ -168,15 +198,15 @@ const SidebarModern: React.FC<TemplateProps> = ({ data, sectionOrder, customizat
         <div className="space-y-4 mb-12">
             <div className="flex flex-col gap-1">
                 <span className="text-[9px] font-black uppercase tracking-widest text-white/40">Email</span>
-                <EditableField path="contactInfo.email" value={data.contactInfo.email} onChange={onDataChange} className="text-xs font-bold text-white/90 truncate" />
+                <EditableField path="contactInfo.email" value={data.contactInfo?.email} onChange={onDataChange} className="text-xs font-bold text-white/90 truncate" />
             </div>
             <div className="flex flex-col gap-1">
                 <span className="text-[9px] font-black uppercase tracking-widest text-white/40">Phone</span>
-                <EditableField path="contactInfo.phone" value={data.contactInfo.phone} onChange={onDataChange} className="text-xs font-bold text-white/90" />
+                <EditableField path="contactInfo.phone" value={data.contactInfo?.phone} onChange={onDataChange} className="text-xs font-bold text-white/90" />
             </div>
             <div className="flex flex-col gap-1">
                 <span className="text-[9px] font-black uppercase tracking-widest text-white/40">Location</span>
-                <EditableField path="contactInfo.location" value={data.contactInfo.location} onChange={onDataChange} className="text-xs font-bold text-white/90" />
+                <EditableField path="contactInfo.location" value={data.contactInfo?.location} onChange={onDataChange} className="text-xs font-bold text-white/90" />
             </div>
         </div>
 

@@ -7,7 +7,7 @@ import { templates as allTemplates } from './templates/templateData';
 import { ResumeContext } from './builder/ResumeContext';
 import { CalendarService } from '../services/calendarService';
 import { generateResumePlainText } from '../utils/resumeUtils';
-import { Layout } from 'lucide-react';
+import { Layout, Clock } from 'lucide-react';
 
 import ResumePreview from './ResumePreview';
 import JobTracker from './builder/JobTracker';
@@ -19,6 +19,7 @@ import EditorNavigation from './builder/EditorNavigation';
 import EditorPanel from './builder/EditorPanel';
 import DownloadDropdown from './DownloadDropdown';
 import TemplateSelectorModal from './builder/TemplateSelectorModal';
+import VersionManagerModal from './builder/VersionManagerModal';
 import OnboardingTour from './OnboardingTour';
 import CareerHub from './builder/CareerHub';
 
@@ -54,12 +55,13 @@ const ResumeBuilder: React.FC<ResumeBuilderProps> = ({ initialData, initialDraft
     
     // UI State
     const [activeMode, setActiveMode] = useState<ViewMode>('editor');
-    const [activeTab, setActiveTab] = useState<'content' | 'design' | 'match' | 'interview'>('content');
-    const [activeSection, setActiveSection] = useState<ResumeSectionKey | 'contact'>('contact');
+    const [activeTab, setActiveTab] = useState<'content' | 'style' | 'match' | 'interview'>('content');
+    const [activeSection, setActiveSection] = useState<ResumeSectionKey | 'contact' | 'finalize'>('contact');
     const [mobileView, setMobileView] = useState<MobileView>('panels');
     const [zoom, setZoom] = useState(0.8); 
     const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
     const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
+    const [isVersionModalOpen, setIsVersionModalOpen] = useState(false);
     const [isCalendarConnected, setIsCalendarConnected] = useState(false);
 
     useEffect(() => {
@@ -90,6 +92,7 @@ const ResumeBuilder: React.FC<ResumeBuilderProps> = ({ initialData, initialDraft
     const [isThinkingPath, setIsThinkingPath] = useState<string | null>(null);
     const [isAiAgentOpen, setIsAiAgentOpen] = useState(false);
     const [runTour, setRunTour] = useState(false);
+    const [isDownloading, setIsDownloading] = useState(false);
 
     useEffect(() => {
         const onboardingCompleted = localStorage.getItem(ONBOARDING_COMPLETED_KEY);
@@ -160,6 +163,55 @@ const ResumeBuilder: React.FC<ResumeBuilderProps> = ({ initialData, initialDraft
             console.error(e); 
         } finally { 
             setIsInterviewPrepLoading(false); 
+        }
+    };
+
+    const handleDownloadPdf = async () => {
+        const element = document.getElementById('resume-container-for-download');
+        if (!element) return;
+        
+        setIsDownloading(true);
+        
+        // Convert margin setting to mm for html2pdf (matching the preview's 0.5in, 0.75in, 1in)
+        const marginMm = { compact: 12.7, normal: 19, spacious: 25.4 }[customization.margin] || 19;
+        
+        const opt = {
+            margin: [marginMm, marginMm, marginMm, marginMm], // [top, left, bottom, right]
+            filename: `${resumeData.fullName.replace(/\s+/g, '_')}_Resume.pdf`,
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: { 
+                scale: 2, 
+                useCORS: true,
+                letterRendering: true,
+                logging: false,
+                backgroundColor: '#ffffff',
+                scrollX: 0,
+                scrollY: 0,
+                width: customization.pageFormat === 'LETTER' ? 816 : 794,
+                windowWidth: customization.pageFormat === 'LETTER' ? 816 : 794
+            },
+            jsPDF: { 
+                unit: 'mm', 
+                format: customization.pageFormat === 'LETTER' ? 'letter' : 'a4', 
+                orientation: 'portrait',
+                compress: true
+            },
+            pagebreak: { mode: ['css', 'legacy'] }
+        };
+
+        try {
+            // Wait longer to ensure React has re-rendered with isDownloading=true
+            // and all layout shifts have settled.
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // @ts-ignore
+            await html2pdf().set(opt).from(element).save();
+        } catch (error) {
+            console.error("PDF Generation Error:", error);
+            // Fallback to print if html2pdf fails
+            window.print();
+        } finally {
+            setIsDownloading(false);
         }
     };
 
@@ -245,6 +297,13 @@ const ResumeBuilder: React.FC<ResumeBuilderProps> = ({ initialData, initialDraft
         } catch (error) { return `Error: ${error instanceof Error ? error.message : String(error)}`; }
     };
 
+    const handleLoadVersion = (version: any) => {
+        setResumeData(version.data);
+        setCustomization(version.customization);
+        setTemplate(version.template);
+        if (version.jobDescription) setJobDescription(version.jobDescription);
+    };
+
     return (
         <ResumeContext.Provider value={{ 
             resumeData, 
@@ -307,6 +366,13 @@ const ResumeBuilder: React.FC<ResumeBuilderProps> = ({ initialData, initialDraft
 
                     <div className="flex items-center gap-3">
                         <button 
+                            onClick={() => setIsVersionModalOpen(true)}
+                            className="hidden sm:flex items-center gap-2 px-5 py-2 bg-white border-2 border-slate-100 text-slate-700 rounded-full text-xs font-black uppercase tracking-widest hover:border-emerald-600 hover:text-emerald-600 hover:shadow-lg hover:shadow-emerald-100 transition-all group"
+                        >
+                            <Clock className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
+                            Versions
+                        </button>
+                        <button 
                             onClick={() => setIsTemplateModalOpen(true)}
                             className="hidden sm:flex items-center gap-2 px-5 py-2 bg-white border-2 border-slate-100 text-slate-700 rounded-full text-xs font-black uppercase tracking-widest hover:border-emerald-600 hover:text-emerald-600 hover:shadow-lg hover:shadow-emerald-100 transition-all group"
                         >
@@ -314,10 +380,11 @@ const ResumeBuilder: React.FC<ResumeBuilderProps> = ({ initialData, initialDraft
                             Template
                         </button>
                         <DownloadDropdown 
-                            onDownloadPdf={() => window.print()} 
+                            onDownloadPdf={handleDownloadPdf} 
                             onDownloadTxt={handleDownloadTxt}
                             onExportJson={handleExportJson}
                             onImportJson={handleImportJson}
+                            isDownloading={isDownloading}
                         />
                     </div>
                 </header>
@@ -365,6 +432,10 @@ const ResumeBuilder: React.FC<ResumeBuilderProps> = ({ initialData, initialDraft
                                         interviewQuestions={interviewQuestions}
                                         onGenerateCoverLetter={handleGenerateCoverLetter}
                                         isCoverLetterLoading={isCoverLetterLoading}
+                                        onDownloadPdf={handleDownloadPdf}
+                                        onDownloadTxt={handleDownloadTxt}
+                                        onExportJson={handleExportJson}
+                                        isDownloading={isDownloading}
                                     />
                                 </div>
 
@@ -384,32 +455,47 @@ const ResumeBuilder: React.FC<ResumeBuilderProps> = ({ initialData, initialDraft
                                             sectionOrder={sectionOrder} 
                                             sectionVisibility={sectionVisibility} 
                                             onDataChange={handleDataChange} 
+                                            isDownloading={isDownloading}
                                         />
                                     </div>
                                 </div>
 
                 {/* Mobile Toggle Navbar */}
-                <div className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-slate-200 flex items-center justify-around px-4 z-40 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+                <div className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-slate-200 flex items-center justify-around px-2 z-40 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
                     <button 
                         onClick={() => { setActiveMode('editor'); setMobileView('panels'); setActiveTab('content'); }}
-                        className={`flex flex-col items-center gap-1 ${activeMode === 'editor' && mobileView === 'panels' && activeTab === 'content' ? 'text-emerald-600' : 'text-slate-400'}`}
+                        className={`flex flex-col items-center gap-1 flex-1 ${activeMode === 'editor' && mobileView === 'panels' && activeTab === 'content' ? 'text-emerald-600' : 'text-slate-400'}`}
                     >
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                        <span className="text-[10px] font-black uppercase tracking-widest">Edit</span>
+                        <span className="text-[9px] font-black uppercase tracking-wider">Content</span>
                     </button>
                     <button 
-                        onClick={() => { setActiveMode('editor'); setMobileView('panels'); setActiveTab('design'); }}
-                        className={`flex flex-col items-center gap-1 ${activeMode === 'editor' && mobileView === 'panels' && activeTab === 'design' ? 'text-emerald-600' : 'text-slate-400'}`}
+                        onClick={() => { setActiveMode('editor'); setMobileView('panels'); setActiveTab('style'); }}
+                        className={`flex flex-col items-center gap-1 flex-1 ${activeMode === 'editor' && mobileView === 'panels' && activeTab === 'style' ? 'text-emerald-600' : 'text-slate-400'}`}
                     >
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" /></svg>
-                        <span className="text-[10px] font-black uppercase tracking-widest">Style</span>
+                        <span className="text-[9px] font-black uppercase tracking-wider">Style</span>
+                    </button>
+                    <button 
+                        onClick={() => { setActiveMode('editor'); setMobileView('panels'); setActiveTab('match'); }}
+                        className={`flex flex-col items-center gap-1 flex-1 ${activeMode === 'editor' && mobileView === 'panels' && activeTab === 'match' ? 'text-emerald-600' : 'text-slate-400'}`}
+                    >
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <span className="text-[9px] font-black uppercase tracking-wider">Match</span>
+                    </button>
+                    <button 
+                        onClick={() => { setActiveMode('editor'); setMobileView('panels'); setActiveTab('interview'); }}
+                        className={`flex flex-col items-center gap-1 flex-1 ${activeMode === 'editor' && mobileView === 'panels' && activeTab === 'interview' ? 'text-emerald-600' : 'text-slate-400'}`}
+                    >
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+                        <span className="text-[9px] font-black uppercase tracking-wider">Interview Prep</span>
                     </button>
                     <button 
                         onClick={() => { setActiveMode('editor'); setMobileView('preview'); }}
-                        className={`flex flex-col items-center gap-1 ${activeMode === 'editor' && mobileView === 'preview' ? 'text-emerald-600' : 'text-slate-400'}`}
+                        className={`flex flex-col items-center gap-1 flex-1 ${activeMode === 'editor' && mobileView === 'preview' ? 'text-emerald-600' : 'text-slate-400'}`}
                     >
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                        <span className="text-[10px] font-black uppercase tracking-widest">Preview</span>
+                        <span className="text-[9px] font-black uppercase tracking-wider">Preview</span>
                     </button>
                 </div>
                             </motion.div>
@@ -443,6 +529,17 @@ const ResumeBuilder: React.FC<ResumeBuilderProps> = ({ initialData, initialDraft
                             resumeData={resumeData}
                             onTemplateChange={(t) => { setTemplate(t); setIsTemplateModalOpen(false); }}
                             onClose={() => setIsTemplateModalOpen(false)}
+                        />
+                    )}
+                    {isVersionModalOpen && (
+                        <VersionManagerModal 
+                            isOpen={isVersionModalOpen}
+                            onClose={() => setIsVersionModalOpen(false)}
+                            currentData={resumeData}
+                            currentCustomization={customization}
+                            currentTemplate={template}
+                            currentJobDescription={jobDescription}
+                            onLoadVersion={handleLoadVersion}
                         />
                     )}
                     {auditResult && <AiAuditModal result={auditResult} onClose={() => setAuditResult(null)} onRewrite={handleRewrite} />}

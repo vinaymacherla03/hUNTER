@@ -22,7 +22,7 @@ const SkillsForm: React.FC<Props> = ({ data, onDataChange }) => {
     };
 
     const handleRemoveCategory = (index: number) => {
-        const newEntries = [...data.skills];
+        const newEntries = [...(data.skills || [])];
         newEntries.splice(index, 1);
         onDataChange('skills', newEntries);
     };

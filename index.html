@@ -6,99 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HuntDesk | The AI Career Command Center</title>
     <meta name="description" content="HuntDesk is your all-in-one career command center. Build ATS-optimized resumes, track job applications, and land your dream job with AI-powered tools.">
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Roboto:wght@400;500;700&family=Lato:wght@400;700&family=Montserrat:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;700&family=Open+Sans:wght@400;600;700&family=Poppins:wght@400;600;700&family=Merriweather:wght@400;700&family=Nunito:wght@400;600;700&family=Oswald:wght@400;700&family=Raleway:wght@400;700&family=Crimson+Pro:wght@400;700&family=Work+Sans:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
-            display: ['"Plus Jakarta Sans"', 'sans-serif'],
-            serif: ['"Playfair Display"', 'serif'],
-            mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
-            roboto: ['Roboto', 'sans-serif'],
-            lato: ['Lato', 'sans-serif'],
-            montserrat: ['Montserrat', 'sans-serif'],
-            'source-sans': ['"Source Sans 3"', 'sans-serif'],
-            lora: ['Lora', 'serif'],
-            'roboto-mono': ['"Roboto Mono"', 'monospace'],
-            'open-sans': ['"Open Sans"', 'sans-serif'],
-            'poppins': ['Poppins', 'sans-serif'],
-            'times-new-roman': ['"Times New Roman"', 'Times', 'serif'],
-            'tahoma': ['Tahoma', 'sans-serif'],
-            'verdana': ['Verdana', 'sans-serif'],
-            'arial': ['Arial', 'sans-serif'],
-            'helvetica': ['Helvetica', 'sans-serif'],
-            'calibri': ['Calibri', 'sans-serif'],
-            'georgia': ['Georgia', 'serif'],
-            'cambria': ['Cambria', 'serif'],
-            'gill-sans': ['"Gill Sans"', '"Gill Sans MT"', 'sans-serif'],
-            'garamond': ['Garamond', 'serif'],
-            'merriweather': ['Merriweather', 'serif'],
-            'nunito': ['Nunito', 'sans-serif'],
-            'oswald': ['Oswald', 'sans-serif'],
-            'raleway': ['Raleway', 'sans-serif'],
-            'crimson-pro': ['"Crimson Pro"', 'serif'],
-            'work-sans': ['"Work Sans"', 'sans-serif'],
-            'jetbrains-mono': ['"JetBrains Mono"', 'monospace'],
-          },
-          colors: {
-            primary: { 50: '#f0f9ff', 100: '#e0f2fe', 200: '#bae6fd', 300: '#7dd3fc', 400: '#38bdf8', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e', 950: '#082f49' },
-            slate: { 850: '#151e2e', 900: '#0f172a' },
-            violet: { 500: '#8b5cf6', 600: '#7c3aed' },
-            emerald: { 500: '#10b981', 600: '#059669' },
-          },
-           animation: {
-              'scroll-left': 'scroll-left 40s linear infinite',
-              'scroll-right': 'scroll-right 40s linear infinite',
-              'float': 'float 6s ease-in-out infinite',
-              'blob': 'blob 7s infinite',
-              'text-shimmer': 'text-shimmer 2.5s linear infinite',
-              'scan': 'scan 4s cubic-bezier(0.4, 0, 0.2, 1) infinite',
-              'fadeIn': 'fadeIn 0.5s ease-out forwards',
-           },
-           keyframes: {
-             'scroll-left': {
-               '0%': { transform: 'translateX(0)' },
-               '100%': { transform: 'translateX(-50%)' },
-             },
-             'scroll-right': {
-               '0%': { transform: 'translateX(-50%)' },
-               '100%': { transform: 'translateX(0)' },
-             },
-             'float': {
-                '0%, 100%': { transform: 'translateY(0)' },
-                '50%': { transform: 'translateY(-20px)' },
-             },
-             'blob': {
-                '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                '100%': { transform: 'translate(0px, 0px) scale(1)' },
-             },
-             'text-shimmer': {
-                '0%': { backgroundPosition: '0% 50%' },
-                '100%': { backgroundPosition: '200% 50%' }
-             },
-             'scan': {
-                '0%': { top: '0%', opacity: 0 },
-                '10%': { opacity: 1 },
-                '90%': { opacity: 1 },
-                '100%': { top: '100%', opacity: 0 }
-            },
-            'fadeIn': {
-                '0%': { opacity: 0, transform: 'translateY(10px)' },
-                '100%': { opacity: 1, transform: 'translateY(0)' }
-            }
-           },
-        }
-      }
-    }
-    </script>
     <style>
       html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
       .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -116,7 +26,6 @@
         #resume-container-for-download { box-shadow: none !important; margin: 0 !important; width: 100% !important; height: auto !important; transform: none !important; }
       }
     </style>
-<link rel="stylesheet" href="/index.css">
     <style>
         .resume-preview-container * {
             font-family: inherit !important;
@@ -126,26 +35,6 @@
 <body>
     <div id="root"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script type="importmap">
-{
-  "imports": {
-    "react": "https://aistudiocdn.com/react@^19.1.1",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
-    "react/": "https://aistudiocdn.com/react@^19.1.1/",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.17.0",
-    "framer-motion": "https://aistudiocdn.com/framer-motion@^11.3.11",
-    "firebase/app": "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js",
-    "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js",
-    "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js",
-    "firebase/": "https://aistudiocdn.com/firebase@^12.6.0/",
-    "@testing-library/react": "https://aistudiocdn.com/@testing-library/react@^16.3.0",
-    "mammoth": "https://cdn.jsdelivr.net/npm/mammoth@1.6.0/+esm",
-    "pdfjs-dist": "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/+esm",
-    "pdfjs-dist/build/pdf.worker.min.mjs": "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.mjs"
-  }
-}
-</script>
-    <script type="module" src="./index.tsx"></script>
-<script type="module" src="/index.tsx"></script>
+    <script type="module" src="/index.tsx"></script>
 </body>
 </html>

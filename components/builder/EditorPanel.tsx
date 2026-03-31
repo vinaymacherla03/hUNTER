@@ -16,12 +16,13 @@ import SectionReorder from '../SectionReorder';
 import JobMatchAnalyzer from './JobMatchAnalyzer';
 import AICompactor from './AICompactor';
 import TemplateSelector from '../TemplateSelector';
+import FinalizeSection from './FinalizeSection';
 
 import InterviewPrepContent from './InterviewPrepContent';
 
 interface EditorPanelProps {
-    activeTab: 'content' | 'design' | 'match' | 'interview';
-    activeSection: ResumeSectionKey | 'contact';
+    activeTab: 'content' | 'style' | 'match' | 'interview';
+    activeSection: ResumeSectionKey | 'contact' | 'finalize';
     resumeData: ResumeData;
     onDataChange: (path: string, value: any) => void;
     jobDescription: string;
@@ -35,12 +36,16 @@ interface EditorPanelProps {
     sectionVisibility: Record<ResumeSectionKey, boolean>;
     onSectionVisibilityChange: (section: ResumeSectionKey, isVisible: boolean) => void;
     onCompactResume: () => Promise<void>;
-    setActiveSection: (section: ResumeSectionKey | 'contact') => void;
+    setActiveSection: (section: ResumeSectionKey | 'contact' | 'finalize') => void;
     onInterviewPrep: () => Promise<void>;
     isInterviewPrepLoading: boolean;
     interviewQuestions: InterviewQuestion[] | null;
     onGenerateCoverLetter: () => Promise<void>;
     isCoverLetterLoading: boolean;
+    onDownloadPdf: () => void;
+    onDownloadTxt: () => void;
+    onExportJson: () => void;
+    isDownloading: boolean;
 }
 
 const EditorPanel: React.FC<EditorPanelProps> = ({
@@ -64,7 +69,11 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
     isInterviewPrepLoading,
     interviewQuestions,
     onGenerateCoverLetter,
-    isCoverLetterLoading
+    isCoverLetterLoading,
+    onDownloadPdf,
+    onDownloadTxt,
+    onExportJson,
+    isDownloading
 }) => {
     
     const animationProps = {
@@ -74,7 +83,7 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
         transition: { duration: 0.2, ease: [0.23, 1, 0.32, 1] as const }
     };
 
-    const allSections = ['contact', ...sectionOrder] as (ResumeSectionKey | 'contact')[];
+    const allSections = ['contact', ...sectionOrder, 'finalize'] as (ResumeSectionKey | 'contact' | 'finalize')[];
     const currentIndex = allSections.indexOf(activeSection);
     const hasNext = currentIndex < allSections.length - 1;
     const hasPrev = currentIndex > 0;
@@ -98,6 +107,15 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
             case 'certifications': return <CertificationsForm data={resumeData} onDataChange={onDataChange} />;
             case 'awards': return <AwardsForm data={resumeData} onDataChange={onDataChange} />;
             case 'keywords': return <KeywordsForm data={resumeData} onDataChange={onDataChange} />;
+            case 'finalize': return (
+                <FinalizeSection 
+                    resumeData={resumeData} 
+                    onDownloadPdf={onDownloadPdf} 
+                    onDownloadTxt={onDownloadTxt} 
+                    onExportJson={onExportJson} 
+                    isDownloading={isDownloading} 
+                />
+            );
             default: return <div>Select a section to edit</div>;
         }
     };
@@ -126,17 +144,30 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
                                 {hasNext ? (
                                     <button 
                                         onClick={handleNext}
-                                        className="px-8 py-3 rounded-full bg-emerald-500 text-white font-bold text-sm hover:bg-emerald-600 transition-colors"
+                                        className="px-8 py-3 rounded-full bg-emerald-500 text-white font-bold text-sm hover:bg-emerald-600 shadow-lg shadow-emerald-100 transition-all"
                                     >
                                         Continue
+                                    </button>
+                                ) : activeSection === 'finalize' ? (
+                                    <button 
+                                        onClick={onDownloadPdf}
+                                        disabled={isDownloading}
+                                        className="px-8 py-3 rounded-full bg-slate-900 text-white font-bold text-sm hover:bg-slate-800 shadow-lg shadow-slate-200 transition-all flex items-center gap-2 disabled:opacity-70"
+                                    >
+                                        {isDownloading ? (
+                                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                        ) : (
+                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                                        )}
+                                        Download PDF
                                     </button>
                                 ) : <div />}
                             </div>
                         </motion.div>
                     )}
 
-                    {activeTab === 'design' && (
-                        <motion.div key="design" {...animationProps} className="space-y-12 sm:space-y-16">
+                    {activeTab === 'style' && (
+                        <motion.div key="style" {...animationProps} className="space-y-12 sm:space-y-16">
                             <div className="pt-8 sm:pt-12">
                                 <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mb-2">Templates</h2>
                                 <p className="text-xs sm:text-sm text-slate-500 mb-6 sm:mb-8 font-medium">Select a pre-designed template for your resume.</p>
@@ -189,6 +220,10 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
                     )}
                     {activeTab === 'interview' && (
                         <motion.div key="interview" {...animationProps}>
+                            <div className="mb-12">
+                                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mb-2">Interview Preparation</h2>
+                                <p className="text-xs sm:text-sm text-slate-500 font-medium">Get ready for your next interview with AI-generated questions tailored to your profile.</p>
+                            </div>
                             <InterviewPrepContent 
                                 questions={interviewQuestions || []} 
                                 role={resumeData.title} 

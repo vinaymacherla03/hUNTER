@@ -29,7 +29,7 @@ const OnboardingTour: React.FC<OnboardingTourProps> = ({ run, onFinish }) => {
       ),
     },
     {
-      target: '#tour-edit-tab',
+      target: '#tour-content-tab',
       content: (
         <div className="text-left">
           <h3 className="text-md font-bold mb-1">Content Editor</h3>
@@ -56,7 +56,7 @@ const OnboardingTour: React.FC<OnboardingTourProps> = ({ run, onFinish }) => {
       ),
     },
     {
-      target: '#tour-prep-tab',
+      target: '#tour-interview-tab',
       content: (
         <div className="text-left">
           <h3 className="text-md font-bold mb-1">Interview Prep</h3>

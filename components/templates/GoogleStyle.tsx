@@ -39,7 +39,7 @@ const GoogleStyle: React.FC<TemplateProps> = ({ data, sectionOrder, customizatio
         <h2 style={sectionTitleStyle}>Experience</h2>
         <EditableList items={data.experience || []} path="experience" onChange={onDataChange} newItem={{ id: '', role: 'Role', company: 'Company', location: 'Location', dates: 'Dates', description: ['Achievement'] }}>
           {(exp, i) => (
-            <div key={exp.id} className="mb-4 last:mb-0">
+            <div key={exp.id} className="mb-4 last:mb-0" style={{ pageBreakInside: 'avoid' }}>
               <div className="flex justify-between items-baseline mb-0.5">
                 <div className="flex gap-2 items-baseline">
                     <EditableField path={`experience[${i}].role`} value={exp.role} onChange={onDataChange} className="font-bold text-black text-[11pt]" />
@@ -67,13 +67,13 @@ const GoogleStyle: React.FC<TemplateProps> = ({ data, sectionOrder, customizatio
       <section key="skills" className="mb-4">
         <h2 style={sectionTitleStyle}>Skills</h2>
         <div className="space-y-1">
-          {data.skills.map((cat, i) => (
+          {data.skills?.map((cat, i) => (
             <div key={cat.id} className="flex gap-2">
               <EditableField path={`skills[${i}].name`} value={cat.name} onChange={onDataChange} className="font-bold text-black text-[10pt] min-w-[120px]" />
               <div className="flex-1 text-slate-700 text-[10pt]">
                 <EditableField 
                     path={`skills[${i}].skills`} 
-                    value={cat.skills.map(s => s.name).join(', ')} 
+                    value={cat.skills?.map(s => s.name).join(', ')} 
                     onChange={(p, v) => onDataChange(p, v.split(',').map(s => ({ name: s.trim(), proficiency: 'Intermediate' })))} 
                 />
               </div>
@@ -102,8 +102,8 @@ const GoogleStyle: React.FC<TemplateProps> = ({ data, sectionOrder, customizatio
           </EditableList>
         </section>
     ),
-    projects: (
-        <section key="projects" className="mb-4">
+    projects: data.projects?.length ? (
+        <section key="projects" className="mb-4" style={{ pageBreakInside: 'avoid' }}>
           <h2 style={sectionTitleStyle}>Projects</h2>
           <EditableList items={data.projects || []} path="projects" onChange={onDataChange} newItem={{ id: '', name: 'Project', role: 'Role', description: ['Detail'] }}>
             {(proj, i) => (
@@ -113,39 +113,69 @@ const GoogleStyle: React.FC<TemplateProps> = ({ data, sectionOrder, customizatio
                     <EditableField path={`projects[${i}].role`} value={proj.role} onChange={onDataChange} className="text-slate-500 text-[9pt] italic" />
                 </div>
                 <div className="text-slate-700 text-[9pt] leading-snug">
-                    {proj.description.join(' • ')}
+                    {proj.description?.join(' • ')}
                 </div>
               </div>
             )}
           </EditableList>
         </section>
-    ),
-    certifications: <div key="certifications" />,
-    awards: <div key="awards" />,
-    keywords: (
+    ) : null,
+    certifications: data.certifications?.length ? (
+        <section key="certifications" className="mb-4" style={{ pageBreakInside: 'avoid' }}>
+          <h2 style={sectionTitleStyle}>Certifications</h2>
+          <div className="space-y-2">
+            {data.certifications?.map((cert, i) => (
+              <div key={cert.id} className="flex justify-between items-baseline">
+                <div>
+                    <span className="font-bold text-black text-[10pt]">{cert.name}</span>
+                    {cert.issuer && <span className="text-slate-700 text-[9pt]"> - {cert.issuer}</span>}
+                </div>
+                {cert.date && <div className="text-slate-500 text-[9pt]">{cert.date}</div>}
+              </div>
+            ))}
+          </div>
+        </section>
+    ) : null,
+    awards: data.awards?.length ? (
+        <section key="awards" className="mb-4" style={{ pageBreakInside: 'avoid' }}>
+          <h2 style={sectionTitleStyle}>Awards</h2>
+          <div className="space-y-2">
+            {data.awards?.map((award, i) => (
+              <div key={award.id} className="flex justify-between items-baseline">
+                <div>
+                    <span className="font-bold text-black text-[10pt]">{award.name}</span>
+                    {award.issuer && <span className="text-slate-700 text-[9pt]"> - {award.issuer}</span>}
+                </div>
+                {award.date && <div className="text-slate-500 text-[9pt]">{award.date}</div>}
+              </div>
+            ))}
+          </div>
+        </section>
+    ) : null,
+    keywords: data.keywords?.length ? (
         <section key="keywords" className="mb-4">
           <h2 style={sectionTitleStyle}>Keywords</h2>
           <div className="text-slate-700 text-[10pt] leading-normal mt-1">
             {data.keywords?.join(', ')}
           </div>
         </section>
-    )
+    ) : null
   };
 
   return (
-    <div id="resume-content" style={{ padding: marginValue }} className="bg-white font-sans">
+    <div id="resume-content" className="bg-white font-sans">
       <header className="text-center mb-6">
         <EditableField as="h1" path="fullName" value={data.fullName} onChange={onDataChange} className="text-[24pt] font-normal leading-none text-black mb-2" />
         <div className="flex justify-center flex-wrap gap-x-3 text-[10pt] text-slate-600">
-          <EditableField path="contactInfo.location" value={data.contactInfo.location} onChange={onDataChange} />
+          <EditableField path="contactInfo.location" value={data.contactInfo?.location} onChange={onDataChange} />
           <span>|</span>
-          <EditableField path="contactInfo.phone" value={data.contactInfo.phone} onChange={onDataChange} />
+          <EditableField path="contactInfo.phone" value={data.contactInfo?.phone} onChange={onDataChange} />
           <span>|</span>
-          <EditableField path="contactInfo.email" value={data.contactInfo.email} onChange={onDataChange} className="text-blue-600" />
-          {data.contactInfo.linkedin && (
+          <EditableField path="contactInfo.email" value={data.contactInfo?.email} onChange={onDataChange} className="text-blue-600" />
+          {data.contactInfo?.linkedin && (
               <>
                 <span>|</span>
-                <EditableField path="contactInfo.linkedin" value={data.contactInfo.linkedin} onChange={onDataChange} className="text-blue-600" />
+                <EditableField path="contactInfo.linkedin" value={data.contactInfo?.linkedin} onChange={onDataChange} className="text-blue-600" />
               </>
           )}
         </div>

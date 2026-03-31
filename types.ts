@@ -118,6 +118,16 @@ export interface AuditResult {
 }
 
 
+export interface ResumeVersion {
+    id: string;
+    name: string;
+    timestamp: number;
+    data: ResumeData;
+    customization: Customization;
+    template: TemplateKey;
+    jobDescription?: string;
+}
+
 export interface ResumeData {
     fullName: string;
     title: string;
