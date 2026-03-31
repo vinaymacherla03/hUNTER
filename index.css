@@ -1,0 +1,22 @@
+/* Hide editing controls and AI tools in preview mode */
+.preview-mode [aria-label="Item controls"],
+.preview-mode .ai-tools-container,
+.preview-mode .grammar-indicator {
+    display: none !important;
+}
+
+/* Ensure previews look consistent */
+.preview-mode .resume-preview-container {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+    border: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
