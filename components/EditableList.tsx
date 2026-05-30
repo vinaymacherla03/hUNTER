@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useResumeContext } from './builder/ResumeContext';
 
 const ControlButton: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement>> = ({ children, className, ...props }) => (
   <button
@@ -33,6 +34,7 @@ interface EditableListProps<T> {
 
 
 export function EditableList<T>({ items, path, onChange, newItem, children, renderItem, className }: EditableListProps<T>) {
+  const { readOnly } = useResumeContext();
 
   const handleAdd = (index: number) => {
     const newItems = [...items];
@@ -76,7 +78,7 @@ export function EditableList<T>({ items, path, onChange, newItem, children, rend
           if (!item) return null;
           return (
             <ItemWrapper
-              key={(item as any).id || index}
+              key={`${(item as any).id || 'item'}-${index}`}
               className="relative group"
               layout="position"
               initial={{ opacity: 0, y: -10 }}
@@ -85,24 +87,26 @@ export function EditableList<T>({ items, path, onChange, newItem, children, rend
               transition={{ duration: 0.3, ease: 'easeInOut' }}
             >
               {renderer(item, index)}
-              <div className="absolute -right-2 top-1/2 -translate-y-1/2 flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity" aria-label="Item controls">
-                <ControlButton onClick={() => handleAdd(index)} title="Add item below">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" /></svg>
-                </ControlButton>
-                <ControlButton onClick={() => handleRemove(index)} title="Remove item">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" /></svg>
-                </ControlButton>
-                {index > 0 && (
-                    <ControlButton onClick={() => handleMove(index, 'up')} title="Move up">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a1 1 0 01-1-1V5.414l-2.293 2.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 01-1 1z" clipRule="evenodd" /></svg>
-                    </ControlButton>
-                )}
-                {index < items.length - 1 && (
-                     <ControlButton onClick={() => handleMove(index, 'down')} title="Move down">
-                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 2a1 1 0 011 1v11.586l2.293-2.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 14.586V3a1 1 0 011-1z" clipRule="evenodd" /></svg>
-                    </ControlButton>
-                )}
-              </div>
+              {!readOnly && (
+                <div className="absolute -right-2 top-1/2 -translate-y-1/2 flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity" aria-label="Item controls">
+                  <ControlButton onClick={() => handleAdd(index)} title="Add item below">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" /></svg>
+                  </ControlButton>
+                  <ControlButton onClick={() => handleRemove(index)} title="Remove item">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" /></svg>
+                  </ControlButton>
+                  {index > 0 && (
+                      <ControlButton onClick={() => handleMove(index, 'up')} title="Move up">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a1 1 0 01-1-1V5.414l-2.293 2.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 01-1 1z" clipRule="evenodd" /></svg>
+                      </ControlButton>
+                  )}
+                  {index < items.length - 1 && (
+                      <ControlButton onClick={() => handleMove(index, 'down')} title="Move down">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 2a1 1 0 011 1v11.586l2.293-2.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 14.586V3a1 1 0 011-1z" clipRule="evenodd" /></svg>
+                      </ControlButton>
+                  )}
+                </div>
+              )}
             </ItemWrapper>
           );
         })}

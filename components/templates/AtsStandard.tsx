@@ -3,6 +3,7 @@ import React from 'react';
 import { ResumeData, ResumeSectionKey, Customization } from '../../types';
 import EditableField from '../EditableField';
 import { EditableList } from '../EditableList';
+import AnimatedSection from '../builder/AnimatedSection';
 
 interface TemplateProps {
   data: ResumeData;
@@ -23,23 +24,25 @@ const AtsStandard: React.FC<TemplateProps> = ({ data, sectionOrder, customizatio
     marginBottom: '6px',
     marginTop: '16px',
     fontWeight: 'bold',
-    borderBottom: '1.5px solid #000',
-    paddingBottom: '1px',
+    borderBottom: customization.sectionTitleBorderStyle === 'underline' || customization.sectionTitleBorderStyle === 'full' ? '1px solid currentColor' : 'none',
+    borderTop: customization.sectionTitleBorderStyle === 'overline' || customization.sectionTitleBorderStyle === 'full' ? '1px solid currentColor' : 'none',
+    paddingBottom: customization.sectionTitleBorderStyle === 'underline' || customization.sectionTitleBorderStyle === 'full' ? '4px' : '0',
+    paddingTop: customization.sectionTitleBorderStyle === 'overline' || customization.sectionTitleBorderStyle === 'full' ? '4px' : '0',
   };
 
   const sections: Record<ResumeSectionKey, React.ReactNode> = {
     summary: (
-      <section key="summary" className="mb-4">
+      <AnimatedSection key="summary" className="mb-4">
         <h2 style={sectionTitleStyle}>Profile Summary</h2>
         <EditableField as="p" path="summary" value={data.summary} onChange={onDataChange} className="text-black leading-relaxed text-[10pt] mt-1" />
-      </section>
+      </AnimatedSection>
     ),
     experience: (
-      <section key="experience" className="mb-4">
+      <AnimatedSection key="experience" className="mb-4">
         <h2 style={sectionTitleStyle}>Professional Experience</h2>
         <EditableList items={data.experience || []} path="experience" onChange={onDataChange} newItem={{ id: '', role: 'Role', company: 'Company', location: 'Location', dates: 'Dates', description: ['Achievement'] }}>
           {(exp, i) => (
-            <div key={exp.id} className="mb-4 last:mb-0" style={{ pageBreakInside: 'avoid' }}>
+            <div key={`${exp.id || 'exp'}-${i}`} className="mb-4 last:mb-0" style={{ pageBreakInside: 'avoid' }}>
               <div className="flex gap-4">
                 <div className="w-[130px] shrink-0 text-black text-[10pt]">
                   <EditableField path={`experience[${i}].dates`} value={exp.dates} onChange={onDataChange} className="font-bold block mb-0.5" />
@@ -50,7 +53,7 @@ const AtsStandard: React.FC<TemplateProps> = ({ data, sectionOrder, customizatio
                     <EditableField path={`experience[${i}].role`} value={exp.role} onChange={onDataChange} className="font-bold text-black text-[11pt] flex-1" />
                     <EditableField path={`experience[${i}].company`} value={exp.company} onChange={onDataChange} className="font-bold text-black text-[10pt] shrink-0 text-right" />
                   </div>
-                  <EditableList items={exp.description} path={`experience[${i}].description`} onChange={onDataChange} newItem="New achievement" className="list-disc ml-5 space-y-0.5">
+                  <EditableList items={exp.description || []} path={`experience[${i}].description`} onChange={onDataChange} newItem="New achievement" className="list-disc ml-5 space-y-0.5">
                     {(desc, di) => (
                         <div className="text-black text-[10pt] leading-normal">
                             <EditableField as="div" path={`experience[${i}].description[${di}]`} value={desc} onChange={onDataChange} enableMarkdown />
@@ -62,26 +65,26 @@ const AtsStandard: React.FC<TemplateProps> = ({ data, sectionOrder, customizatio
             </div>
           )}
         </EditableList>
-      </section>
+      </AnimatedSection>
     ),
     skills: (
-      <section key="skills" className="mb-4">
+      <AnimatedSection key="skills" className="mb-4">
         <h2 style={sectionTitleStyle}>Skills</h2>
         <div className="mt-1">
-          {data.skills?.map((cat, i) => (
-            <div key={cat.id} className="text-[10pt] text-black leading-normal">
+          {(data.skills || []).map((cat, i) => (
+            <div key={`${cat.id || 'cat'}-${i}`} className="text-[10pt] text-black leading-normal">
               <span className="font-bold uppercase text-[9pt] tracking-tight">{cat.name}: </span>
-              <span>{cat.skills?.map(s => s.name).join(', ')}</span>
+              <span>{(cat.skills || []).filter(Boolean).map(s => s.name).join(', ')}</span>
             </div>
           ))}
         </div>
-      </section>
+      </AnimatedSection>
     ),
     education: (
-        <section key="education" className="mb-4">
+        <AnimatedSection key="education" className="mb-4">
           <h2 style={sectionTitleStyle}>Education</h2>
-          {data.education?.map((edu, i) => (
-            <div key={edu.id} className="mb-2 last:mb-0">
+          {(data.education || []).map((edu, i) => (
+            <div key={`${edu.id || 'edu'}-${i}`} className="mb-2 last:mb-0">
               <div className="flex justify-between items-baseline">
                 <div className="flex gap-1">
                   <EditableField path={`education[${i}].institution`} value={edu.institution} onChange={onDataChange} className="font-bold text-black text-[10pt]" />
@@ -93,13 +96,13 @@ const AtsStandard: React.FC<TemplateProps> = ({ data, sectionOrder, customizatio
               <EditableField path={`education[${i}].degree`} value={edu.degree} onChange={onDataChange} className="italic text-black text-[10pt] block" />
             </div>
           ))}
-        </section>
+        </AnimatedSection>
     ),
     projects: data.projects?.length ? (
-        <section key="projects" className="mb-4" style={{ pageBreakInside: 'avoid' }}>
+        <AnimatedSection key="projects" className="mb-4" style={{ pageBreakInside: 'avoid' }}>
           <h2 style={sectionTitleStyle}>Projects</h2>
-          {data.projects?.map((proj, i) => (
-            <div key={proj.id} className="mb-3 last:mb-0">
+          {(data.projects || []).map((proj, i) => (
+            <div key={`${proj.id || 'proj'}-${i}`} className="mb-3 last:mb-0">
               <div className="flex justify-between items-baseline">
                 <EditableField path={`projects[${i}].name`} value={proj.name} onChange={onDataChange} className="font-bold text-black text-[10pt]" />
                 <EditableField path={`projects[${i}].role`} value={proj.role} onChange={onDataChange} className="text-black text-[10pt] italic" />
@@ -109,39 +112,39 @@ const AtsStandard: React.FC<TemplateProps> = ({ data, sectionOrder, customizatio
               </div>
             </div>
           ))}
-        </section>
+        </AnimatedSection>
     ) : null,
     certifications: data.certifications?.length ? (
-        <section key="certifications" className="mb-4" style={{ pageBreakInside: 'avoid' }}>
+        <AnimatedSection key="certifications" className="mb-4" style={{ pageBreakInside: 'avoid' }}>
           <h2 style={sectionTitleStyle}>Certifications</h2>
-          {data.certifications?.map((cert, i) => (
-            <div key={cert.id} className="text-[10pt] text-black leading-normal">
+          {(data.certifications || []).map((cert, i) => (
+            <div key={`${cert.id || 'cert'}-${i}`} className="text-[10pt] text-black leading-normal">
               <span className="font-bold">{cert.name}</span>
               {cert.issuer && ` - ${cert.issuer}`}
               {cert.date && ` (${cert.date})`}
             </div>
           ))}
-        </section>
+        </AnimatedSection>
     ) : null,
     awards: data.awards?.length ? (
-        <section key="awards" className="mb-4" style={{ pageBreakInside: 'avoid' }}>
+        <AnimatedSection key="awards" className="mb-4" style={{ pageBreakInside: 'avoid' }}>
           <h2 style={sectionTitleStyle}>Awards</h2>
-          {data.awards?.map((award, i) => (
-            <div key={award.id} className="text-[10pt] text-black leading-normal">
+          {(data.awards || []).map((award, i) => (
+            <div key={`${award.id || 'award'}-${i}`} className="text-[10pt] text-black leading-normal">
               <span className="font-bold">{award.name}</span>
               {award.issuer && ` - ${award.issuer}`}
               {award.date && ` (${award.date})`}
             </div>
           ))}
-        </section>
+        </AnimatedSection>
     ) : null,
     keywords: data.keywords?.length ? (
-        <section key="keywords" className="mb-4" style={{ pageBreakInside: 'avoid' }}>
+        <AnimatedSection key="keywords" className="mb-4" style={{ pageBreakInside: 'avoid' }}>
           <h2 style={sectionTitleStyle}>Keywords</h2>
           <div className="text-[10pt] text-black leading-normal mt-1">
             {data.keywords?.join(', ')}
           </div>
-        </section>
+        </AnimatedSection>
     ) : null
   };
 
@@ -154,11 +157,11 @@ const AtsStandard: React.FC<TemplateProps> = ({ data, sectionOrder, customizatio
             <span>•</span>
             <EditableField path="contactInfo.phone" value={data.contactInfo?.phone} onChange={onDataChange} />
             <span>•</span>
-            <EditableField path="contactInfo.email" value={data.contactInfo?.email} onChange={onDataChange} className="text-blue-700 underline" />
+            <EditableField path="contactInfo.email" value={data.contactInfo?.email} onChange={onDataChange} className="text-emerald-700 underline" />
             {data.contactInfo?.linkedin && (
                 <>
                     <span>•</span>
-                    <EditableField path="contactInfo.linkedin" value={data.contactInfo?.linkedin} onChange={onDataChange} className="text-blue-700 underline" />
+                    <EditableField path="contactInfo.linkedin" value={data.contactInfo?.linkedin} onChange={onDataChange} className="text-emerald-700 underline" />
                 </>
             )}
         </div>

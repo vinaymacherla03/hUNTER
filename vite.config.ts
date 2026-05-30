@@ -15,6 +15,28 @@ export default defineConfig(({ mode }) => {
         host: '0.0.0.0',
       },
       plugins: [react(), tailwindcss()],
+      build: {
+        outDir: 'dist',
+        emptyOutDir: true,
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    vendor: ['react', 'react-dom', 'react-markdown', 'framer-motion'],
+                    pdfjs: ['pdfjs-dist'],
+                    mammoth: ['mammoth'],
+                    firebase: ['firebase/app', 'firebase/firestore', 'firebase/auth'],
+                    icons: ['lucide-react'],
+                    charts: ['recharts'],
+                    map: ['leaflet', 'react-leaflet']
+                }
+            }
+        }
+      },
+      test: {
+        globals: true,
+        environment: 'jsdom',
+        setupFiles: './tests/setup.ts',
+      },
       define: {
         'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
         'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)

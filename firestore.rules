@@ -1,0 +1,143 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Primitive Helpers
+    function isAuthenticated() { return request.auth != null; }
+    function isOwner(userId) { return isAuthenticated() && request.auth.uid == userId; }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    
+    // Schema Validations
+    function isValidUserMemory(data) {
+      return data.keys().hasOnly(['userId', 'preferences', 'facts', 'lastUpdated']) &&
+             data.userId is string && data.userId == request.auth.uid &&
+             (!('preferences' in data) || (data.preferences is string && data.preferences.size() <= 10000)) &&
+             (!('facts' in data) || (data.facts is list && data.facts.size() <= 100 && (data.facts.size() == 0 || data.facts[0] is string))) &&
+             data.lastUpdated == request.time;
+    }
+
+    function isValidAiCache(data) {
+      return data.keys().hasOnly(['result', 'timestamp']) &&
+             data.timestamp == request.time;
+    }
+
+    function isValidRateLimit(data) {
+      return data.keys().hasOnly(['count', 'windowStart', 'dailyCount', 'lastDailyReset']) &&
+             data.count is number && data.count >= 0 &&
+             data.windowStart is timestamp &&
+             (data.keys().hasAll(['dailyCount', 'lastDailyReset']) ? 
+               (data.dailyCount is number && data.dailyCount >= 0 && data.lastDailyReset is timestamp) : 
+               true);
+    }
+
+    function isValidDownloadedResume(data) {
+      return data.keys().hasOnly(['userId', 'resumeData', 'format', 'downloadedAt', 'template']) &&
+             data.userId is string && data.userId == request.auth.uid &&
+             data.resumeData is map &&
+             data.format in ['pdf', 'txt', 'json'] &&
+             data.downloadedAt == request.time &&
+             (!('template' in data) || (data.template is string && data.template.size() <= 100));
+    }
+
+    function isValidJobApplication(data) {
+      return data.keys().hasAll(['userId', 'company', 'role', 'status', 'dateAdded']) &&
+             data.keys().hasOnly(['userId', 'company', 'role', 'status', 'dateAdded', 'jobDescription', 'link', 'location', 'salary', 'source', 'notes', 'lastInteraction', 'contacts', 'tasks']) &&
+             data.userId is string && data.userId == request.auth.uid &&
+             data.company is string && data.company.size() > 0 && data.company.size() <= 200 &&
+             data.role is string && data.role.size() > 0 && data.role.size() <= 200 &&
+             data.status in ['Saved', 'Applied', 'Interviewing', 'Offer', 'Rejected'] &&
+             data.dateAdded is string && data.dateAdded.size() <= 50 &&
+             (!('jobDescription' in data) || (data.jobDescription is string && data.jobDescription.size() <= 50000)) &&
+             (!('link' in data) || (data.link is string && data.link.size() <= 2000)) &&
+             (!('location' in data) || (data.location is string && data.location.size() <= 200)) &&
+             (!('salary' in data) || (data.salary is string && data.salary.size() <= 200)) &&
+             (!('source' in data) || (data.source is string && data.source.size() <= 200)) &&
+             (!('notes' in data) || (data.notes is string && data.notes.size() <= 50000)) &&
+             (!('lastInteraction' in data) || (data.lastInteraction is string && data.lastInteraction.size() <= 50)) &&
+             (!('contacts' in data) || (data.contacts is list && data.contacts.size() <= 100)) &&
+             (!('tasks' in data) || (data.tasks is list && data.tasks.size() <= 100));
+    }
+
+    function isValidJobSearch(data) {
+      return data.keys().hasAll(['query', 'location', 'page', 'results', 'timestamp', 'total_count']) &&
+             data.keys().hasOnly(['query', 'location', 'page', 'results', 'timestamp', 'total_count']) &&
+             data.query is string && data.query.size() <= 200 &&
+             data.location is string && data.location.size() <= 200 &&
+             data.page is number && data.page >= 1 &&
+             data.results is string && data.results.size() <= 1000000 &&
+             data.timestamp == request.time &&
+             data.total_count is number;
+    }
+
+    function isValidResumeVersion(data) {
+      return data.keys().hasAll(['userId', 'name', 'resumeData', 'timestamp']) &&
+             data.keys().hasOnly(['userId', 'name', 'resumeData', 'timestamp', 'isAutoSave', '_customization', '_template', '_jobDescription']) &&
+             data.userId is string && data.userId == request.auth.uid &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+             data.resumeData is map &&
+             data.timestamp == request.time &&
+             (!('isAutoSave' in data) || data.isAutoSave is bool) &&
+             (!('_customization' in data) || data._customization is map) &&
+             (!('_template' in data) || (data._template is string && data._template.size() <= 100)) &&
+             (!('_jobDescription' in data) || typeof(data._jobDescription) != 'map');
+    }
+
+    // Rules
+    match /ai_cache/{cacheKey} {
+      allow read: if true;
+      allow create: if isAuthenticated() && isValidAiCache(incoming());
+      allow update: if isAuthenticated() && isValidAiCache(incoming()) && incoming().diff(existing()).affectedKeys().hasOnly(['result', 'timestamp']);
+    }
+
+    match /system/ai_rate_limit {
+      allow read: if true;
+      allow create: if isAuthenticated() && incoming().keys().hasOnly(['lastRequest']) && incoming().lastRequest == request.time;
+      allow update: if isAuthenticated() && incoming().keys().hasOnly(['lastRequest']) && incoming().lastRequest == request.time && incoming().diff(existing()).affectedKeys().hasOnly(['lastRequest']);
+    }
+
+    match /job_searches/{searchId} {
+      allow read: if true;
+      allow create: if isValidJobSearch(incoming());
+      allow update: if isValidJobSearch(incoming()) && incoming().diff(existing()).affectedKeys().hasOnly(['query', 'location', 'page', 'results', 'timestamp', 'total_count']);
+    }
+
+    match /user_memories/{userId} {
+      allow read: if isAuthenticated() && userId == request.auth.uid;
+      allow create: if isOwner(userId) && isValidUserMemory(incoming()) && incoming().keys().hasAll(['userId', 'lastUpdated']);
+      allow update: if isOwner(userId) && isValidUserMemory(incoming()) && incoming().userId == existing().userId && incoming().diff(existing()).affectedKeys().hasOnly(['preferences', 'facts', 'lastUpdated']);
+      allow delete: if isOwner(userId);
+    }
+
+    match /rate_limits/{userId} {
+      allow read: if userId == 'anonymous' || userId == 'global_stats' || (isAuthenticated() && userId == request.auth.uid);
+      allow create: if (userId == 'anonymous' || userId == 'global_stats' || (isAuthenticated() && userId == request.auth.uid)) && isValidRateLimit(incoming());
+      allow update: if (userId == 'anonymous' || userId == 'global_stats' || (isAuthenticated() && userId == request.auth.uid)) && isValidRateLimit(incoming()) && incoming().diff(existing()).affectedKeys().hasOnly(['count', 'windowStart', 'dailyCount', 'lastDailyReset']);
+    }
+
+    match /downloaded_resumes/{resumeId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && isValidDownloadedResume(incoming());
+      allow update: if false; // Immutable
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    match /job_applications/{jobId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && isValidJobApplication(incoming());
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid && isValidJobApplication(incoming()) && incoming().userId == existing().userId && incoming().diff(existing()).affectedKeys().hasOnly(['company', 'role', 'status', 'dateAdded', 'jobDescription', 'link', 'location', 'salary', 'source', 'notes', 'lastInteraction', 'contacts', 'tasks']);
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    match /resume_versions/{versionId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && isValidResumeVersion(incoming());
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid && isValidResumeVersion(incoming()) && incoming().userId == existing().userId && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'resumeData', 'timestamp', 'isAutoSave', '_customization', '_template', '_jobDescription']);
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+  }
+}

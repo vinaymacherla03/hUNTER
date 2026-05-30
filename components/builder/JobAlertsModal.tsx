@@ -12,7 +12,7 @@ interface JobAlertsModalProps {
     userEmail: string;
 }
 
-const JobAlertsModal: React.FC<JobAlertsModalProps> = ({ onClose, onSave, initialQuery, initialLocation, userEmail }) => {
+const JobAlertsModal = React.forwardRef<HTMLDivElement, JobAlertsModalProps>(({ onClose, onSave, initialQuery, initialLocation, userEmail }, ref) => {
     const [role, setRole] = useState(initialQuery);
     const [location, setLocation] = useState(initialLocation);
     const [frequency, setFrequency] = useState<'daily' | 'weekly'>('daily');
@@ -23,7 +23,7 @@ const JobAlertsModal: React.FC<JobAlertsModalProps> = ({ onClose, onSave, initia
     const handleSave = () => {
         setIsSaving(true);
         const newAlert: JobAlert = {
-            id: `alert-${Date.now()}`,
+            id: `alert-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
             role,
             location,
             frequency,
@@ -43,7 +43,13 @@ const JobAlertsModal: React.FC<JobAlertsModalProps> = ({ onClose, onSave, initia
     };
 
     return (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <motion.div 
+            ref={ref}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+        >
             <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -146,8 +152,10 @@ const JobAlertsModal: React.FC<JobAlertsModalProps> = ({ onClose, onSave, initia
                     </button>
                 </div>
             </motion.div>
-        </div>
+        </motion.div>
     );
-};
+});
+
+JobAlertsModal.displayName = 'JobAlertsModal';
 
 export default JobAlertsModal;

@@ -7,7 +7,7 @@ interface CoverLetterModalProps {
     onClose: () => void;
 }
 
-const CoverLetterModal: React.FC<CoverLetterModalProps> = ({ content, onClose }) => {
+const CoverLetterModal = React.forwardRef<HTMLDivElement, CoverLetterModalProps>(({ content, onClose }, ref) => {
     const [editedContent, setEditedContent] = useState(content);
     const [hasCopied, setHasCopied] = useState(false);
     
@@ -18,7 +18,15 @@ const CoverLetterModal: React.FC<CoverLetterModalProps> = ({ content, onClose })
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+        <motion.div 
+            ref={ref}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4" 
+            role="dialog" 
+            aria-modal="true"
+        >
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
             <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -47,7 +55,10 @@ const CoverLetterModal: React.FC<CoverLetterModalProps> = ({ content, onClose })
                     <p className="text-xs text-slate-500">
                         Review and edit the letter to ensure it matches your voice and experience.
                     </p>
-                    <button
+                    <motion.button
+                        whileTap={{ scale: 0.95 }}
+                        animate={hasCopied ? { scale: [1, 1.1, 1] } : {}}
+                        transition={{ duration: 0.3 }}
                         onClick={handleCopy}
                         className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${
                             hasCopied
@@ -56,11 +67,13 @@ const CoverLetterModal: React.FC<CoverLetterModalProps> = ({ content, onClose })
                         }`}
                     >
                         {hasCopied ? 'Copied!' : 'Copy to Clipboard'}
-                    </button>
+                    </motion.button>
                 </footer>
             </motion.div>
-        </div>
+        </motion.div>
     );
-};
+});
+
+CoverLetterModal.displayName = 'CoverLetterModal';
 
 export default CoverLetterModal;

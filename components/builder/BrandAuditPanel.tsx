@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getPersonalBrandAudit } from '../../services/geminiService';
 import { ResumeData } from '../../types';
+import AIProcessingState from './AIProcessingState';
 import { Sparkles, Target, ShieldAlert, Zap, RefreshCw, ScanFace, Quote } from 'lucide-react';
 
 interface BrandAuditPanelProps {
@@ -52,19 +53,18 @@ const BrandAuditPanel: React.FC<BrandAuditPanelProps> = ({ resumeData }) => {
 
             <AnimatePresence mode="wait">
                 {isLoading ? (
-                    <motion.div 
+                    <AIProcessingState 
                         key="loading"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="py-32 flex flex-col items-center justify-center text-center"
-                    >
-                        <div className="w-24 h-24 bg-emerald-600 rounded-full flex items-center justify-center mb-8 animate-pulse shadow-2xl shadow-emerald-200">
-                            <ScanFace className="w-12 h-12 text-white" />
-                        </div>
-                        <h3 className="text-2xl font-black text-slate-900 uppercase tracking-widest mb-2">Decoding Your DNA</h3>
-                        <p className="text-sm text-slate-500 max-w-xs mx-auto font-bold uppercase tracking-widest opacity-50">Analyzing voice, tone, and impact...</p>
-                    </motion.div>
+                        title="Decoding Your DNA"
+                        messages={[
+                            "Analyzing your professional voice...",
+                            "Evaluating tone and market positioning...",
+                            "Identifying your unique archetype...",
+                            "Uncovering strengths and blind spots..."
+                        ]}
+                        icon={ScanFace}
+                        color="emerald"
+                    />
                 ) : audit ? (
                     <motion.div 
                         key="results"
@@ -73,7 +73,7 @@ const BrandAuditPanel: React.FC<BrandAuditPanelProps> = ({ resumeData }) => {
                         className="grid grid-cols-1 lg:grid-cols-12 gap-8"
                     >
                         {/* Archetype Card */}
-                        <div className="lg:col-span-12 bg-gradient-to-br from-emerald-600 to-teal-700 p-12 rounded-[3rem] text-white relative overflow-hidden shadow-2xl shadow-emerald-200">
+                        <div className="lg:col-span-12 bg-gradient-to-br from-emerald-600 to-emerald-700 p-12 rounded-[3rem] text-white relative overflow-hidden shadow-2xl shadow-emerald-200">
                             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
                             <div className="relative z-10">
                                 <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-200 mb-6 block">Your Professional Archetype</span>
@@ -97,7 +97,7 @@ const BrandAuditPanel: React.FC<BrandAuditPanelProps> = ({ resumeData }) => {
                             </div>
                             <div className="grid grid-cols-1 gap-4">
                                 {audit.strengths.map((s, i) => (
-                                    <div key={i} className="p-6 bg-emerald-50 border-l-4 border-emerald-500 rounded-2xl">
+                                    <div key={`strength-${i}-${s}`} className="p-6 bg-emerald-50 border-l-4 border-emerald-500 rounded-2xl">
                                         <p className="text-sm font-black text-emerald-900 uppercase tracking-tight">{s}</p>
                                     </div>
                                 ))}
@@ -111,7 +111,7 @@ const BrandAuditPanel: React.FC<BrandAuditPanelProps> = ({ resumeData }) => {
                             </div>
                             <div className="grid grid-cols-1 gap-4">
                                 {audit.weaknesses.map((w, i) => (
-                                    <div key={i} className="p-6 bg-rose-50 border-l-4 border-rose-500 rounded-2xl">
+                                    <div key={`weakness-${i}-${w}`} className="p-6 bg-rose-50 border-l-4 border-rose-500 rounded-2xl">
                                         <p className="text-sm font-black text-rose-900 uppercase tracking-tight">{w}</p>
                                     </div>
                                 ))}

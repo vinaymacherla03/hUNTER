@@ -10,7 +10,7 @@ interface ScheduleInterviewModalProps {
     onSuccess: () => void;
 }
 
-const ScheduleInterviewModal: React.FC<ScheduleInterviewModalProps> = ({ job, onClose, onSuccess }) => {
+const ScheduleInterviewModal = React.forwardRef<HTMLDivElement, ScheduleInterviewModalProps>(({ job, onClose, onSuccess }, ref) => {
     const [date, setDate] = useState('');
     const [time, setTime] = useState('');
     const [loading, setLoading] = useState(false);
@@ -38,11 +38,16 @@ const ScheduleInterviewModal: React.FC<ScheduleInterviewModalProps> = ({ job, on
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+        <motion.div 
+            ref={ref}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4" 
+            role="dialog" 
+            aria-modal="true"
+        >
+            <div
                 className="absolute inset-0 bg-black/60 backdrop-blur-sm"
                 onClick={onClose}
             />
@@ -122,8 +127,10 @@ const ScheduleInterviewModal: React.FC<ScheduleInterviewModalProps> = ({ job, on
                     </div>
                 </form>
             </motion.div>
-        </div>
+        </motion.div>
     );
-};
+});
+
+ScheduleInterviewModal.displayName = 'ScheduleInterviewModal';
 
 export default ScheduleInterviewModal;

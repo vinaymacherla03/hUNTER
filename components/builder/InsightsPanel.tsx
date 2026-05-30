@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getMarketInsights } from '../../services/geminiService';
+import { ensureAbsoluteUrl } from '../../utils/url';
 import { Search, TrendingUp, Newspaper, Info, ExternalLink, RefreshCw, MapPin, Briefcase, AlertCircle } from 'lucide-react';
 
 interface InsightsPanelProps {
@@ -97,7 +98,7 @@ const InsightsPanel: React.FC<InsightsPanelProps> = ({ defaultRole }) => {
                             className="space-y-8"
                         >
                             {/* Executive Summary */}
-                            <div className="p-8 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-[2rem] border border-emerald-100 shadow-sm relative overflow-hidden">
+                            <div className="p-8 bg-gradient-to-br from-emerald-50 to-emerald-50 rounded-[2rem] border border-emerald-100 shadow-sm relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/40 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
                                 <div className="relative z-10">
                                     <div className="flex items-center gap-3 mb-4">
@@ -123,7 +124,7 @@ const InsightsPanel: React.FC<InsightsPanelProps> = ({ defaultRole }) => {
                                     </div>
                                     <div className="space-y-4">
                                         {insights.trends.map((trend, i) => (
-                                            <div key={i} className="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm text-sm text-slate-700 font-medium flex items-start gap-4 hover:border-emerald-200 hover:shadow-md transition-all">
+                                            <div key={`trend-${i}-${trend.substring(0, 20)}`} className="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm text-sm text-slate-700 font-medium flex items-start gap-4 hover:border-emerald-200 hover:shadow-md transition-all">
                                                 <span className="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-sm font-bold shrink-0">{i + 1}</span>
                                                 <span className="pt-1 leading-relaxed">{trend}</span>
                                             </div>
@@ -134,7 +135,7 @@ const InsightsPanel: React.FC<InsightsPanelProps> = ({ defaultRole }) => {
                                 {/* News */}
                                 <div className="space-y-6">
                                     <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-teal-50 rounded-xl text-teal-600 border border-teal-100">
+                                        <div className="p-2 bg-emerald-50 rounded-xl text-emerald-600 border border-emerald-100">
                                             <Newspaper className="w-6 h-6" />
                                         </div>
                                         <h3 className="text-lg font-black text-slate-900 tracking-tight">Recent News</h3>
@@ -142,18 +143,18 @@ const InsightsPanel: React.FC<InsightsPanelProps> = ({ defaultRole }) => {
                                     <div className="space-y-4">
                                         {insights.news.map((item, i) => (
                                                 <a 
-                                                key={i} 
-                                                href={item.url} 
+                                                key={`news-${i}-${item.url}`} 
+                                                href={ensureAbsoluteUrl(item.url)} 
                                                 target="_blank" 
                                                 rel="noopener noreferrer"
-                                                className="block p-5 bg-white border border-slate-200 rounded-2xl hover:border-teal-300 hover:shadow-md transition-all group"
+                                                className="block p-5 bg-white border border-slate-200 rounded-2xl hover:border-emerald-300 hover:shadow-md transition-all group"
                                             >
                                                 <div className="flex items-start justify-between gap-4">
-                                                    <p className="text-sm font-bold text-slate-800 group-hover:text-teal-700 leading-relaxed transition-colors">
+                                                    <p className="text-sm font-bold text-slate-800 group-hover:text-emerald-700 leading-relaxed transition-colors">
                                                         {item.title}
                                                     </p>
-                                                    <div className="p-2 bg-slate-50 rounded-lg group-hover:bg-teal-50 transition-colors shrink-0 border border-transparent group-hover:border-teal-100">
-                                                        <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-teal-600 transition-colors" />
+                                                    <div className="p-2 bg-slate-50 rounded-lg group-hover:bg-emerald-50 transition-colors shrink-0 border border-transparent group-hover:border-emerald-100">
+                                                        <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-emerald-600 transition-colors" />
                                                     </div>
                                                 </div>
                                             </a>

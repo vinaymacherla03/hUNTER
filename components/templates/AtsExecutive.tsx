@@ -23,8 +23,10 @@ const AtsExecutive: React.FC<TemplateProps> = ({ data, sectionOrder, customizati
     marginBottom: '6px',
     marginTop: '16px',
     fontWeight: 'bold',
-    borderBottom: '1.5px solid #000',
-    paddingBottom: '1px',
+    borderBottom: customization.sectionTitleBorderStyle === 'underline' || customization.sectionTitleBorderStyle === 'full' ? '1px solid currentColor' : 'none',
+    borderTop: customization.sectionTitleBorderStyle === 'overline' || customization.sectionTitleBorderStyle === 'full' ? '1px solid currentColor' : 'none',
+    paddingBottom: customization.sectionTitleBorderStyle === 'underline' || customization.sectionTitleBorderStyle === 'full' ? '4px' : '0',
+    paddingTop: customization.sectionTitleBorderStyle === 'overline' || customization.sectionTitleBorderStyle === 'full' ? '4px' : '0',
   };
 
   const sections: Record<ResumeSectionKey, React.ReactNode> = {
@@ -39,7 +41,7 @@ const AtsExecutive: React.FC<TemplateProps> = ({ data, sectionOrder, customizati
         <h2 style={sectionTitleStyle}>Professional Experience</h2>
         <EditableList items={data.experience || []} path="experience" onChange={onDataChange} newItem={{ id: '', role: 'Role', company: 'Company', location: 'Location', dates: 'Dates', description: ['Achievement'] }}>
           {(exp, i) => (
-            <div key={exp.id} className="mb-5 last:mb-0" style={{ pageBreakInside: 'avoid' }}>
+            <div key={`${exp.id || 'exp'}-${i}`} className="mb-5 last:mb-0" style={{ pageBreakInside: 'avoid' }}>
               <div className="flex gap-6">
                 <div className="w-[130px] shrink-0 text-black text-[10pt]">
                   <EditableField path={`experience[${i}].dates`} value={exp.dates} onChange={onDataChange} className="font-bold block mb-0.5" />
@@ -72,7 +74,7 @@ const AtsExecutive: React.FC<TemplateProps> = ({ data, sectionOrder, customizati
       <section key="skills" className="mb-6">
         <h2 style={sectionTitleStyle}>Skills</h2>
         <div className="mt-2 space-y-2">
-          {data.skills?.flatMap(cat => cat.skills)?.map((s, si) => (
+          {(data.skills || []).flatMap(cat => cat.skills || [])?.map((s, si) => (
             <div key={si} className="text-[10.5pt] text-black leading-normal font-serif flex items-center gap-2">
               <span className="w-1 h-1 bg-black rounded-full" />
               {s.name}
@@ -84,8 +86,8 @@ const AtsExecutive: React.FC<TemplateProps> = ({ data, sectionOrder, customizati
     education: (
         <section key="education" className="mb-6">
           <h2 style={sectionTitleStyle}>Education</h2>
-          {data.education?.map((edu, i) => (
-            <div key={edu.id} className="mb-3 last:mb-0">
+          {(data.education || []).map((edu, i) => (
+            <div key={`${edu.id || 'edu'}-${i}`} className="mb-3 last:mb-0">
               <div className="flex justify-between items-baseline gap-4">
                 <EditableField path={`education[${i}].institution`} value={edu.institution} onChange={onDataChange} className="font-bold text-black text-[11pt] font-serif flex-1" />
                 <EditableField path={`education[${i}].graduationDate`} value={edu.graduationDate} onChange={onDataChange} className="text-black text-[10pt] font-bold shrink-0" />
@@ -101,8 +103,8 @@ const AtsExecutive: React.FC<TemplateProps> = ({ data, sectionOrder, customizati
     projects: data.projects?.length ? (
         <section key="projects" className="mb-6" style={{ pageBreakInside: 'avoid' }}>
           <h2 style={sectionTitleStyle}>Projects</h2>
-          {data.projects?.map((proj, i) => (
-            <div key={proj.id} className="mb-4 last:mb-0">
+          {(data.projects || []).map((proj, i) => (
+            <div key={`${proj.id || 'proj'}-${i}`} className="mb-4 last:mb-0">
               <div className="flex justify-between items-baseline mb-1 gap-4">
                 <EditableField path={`projects[${i}].name`} value={proj.name} onChange={onDataChange} className="font-bold text-black text-[11pt] font-serif flex-1" />
                 <EditableField path={`projects[${i}].role`} value={proj.role} onChange={onDataChange} className="text-black text-[10pt] italic shrink-0" />
@@ -118,8 +120,8 @@ const AtsExecutive: React.FC<TemplateProps> = ({ data, sectionOrder, customizati
         <section key="certifications" className="mb-6" style={{ pageBreakInside: 'avoid' }}>
           <h2 style={sectionTitleStyle}>Certifications</h2>
           <div className="space-y-2 mt-2">
-            {data.certifications?.map((cert, i) => (
-                <div key={cert.id} className="text-[10.5pt] text-black leading-normal font-serif">
+            {(data.certifications || []).map((cert, i) => (
+                <div key={`${cert.id || 'cert'}-${i}`} className="text-[10.5pt] text-black leading-normal font-serif">
                 <span className="font-bold">{cert.name}</span>
                 {cert.issuer && `, ${cert.issuer}`}
                 {cert.date && ` (${cert.date})`}
@@ -132,8 +134,8 @@ const AtsExecutive: React.FC<TemplateProps> = ({ data, sectionOrder, customizati
         <section key="awards" className="mb-6" style={{ pageBreakInside: 'avoid' }}>
           <h2 style={sectionTitleStyle}>Awards</h2>
           <div className="space-y-2 mt-2">
-            {data.awards?.map((award, i) => (
-                <div key={award.id} className="text-[10.5pt] text-black leading-normal font-serif">
+            {(data.awards || []).map((award, i) => (
+                <div key={`${award.id || 'award'}-${i}`} className="text-[10.5pt] text-black leading-normal font-serif">
                 <span className="font-bold">{award.name}</span>
                 {award.issuer && `, ${award.issuer}`}
                 {award.date && ` (${award.date})`}
@@ -160,8 +162,8 @@ const AtsExecutive: React.FC<TemplateProps> = ({ data, sectionOrder, customizati
   ].filter(Boolean);
 
   return (
-    <div id="resume-content" className="bg-white font-serif selection:bg-slate-200 selection:text-black">
-      <header className="mb-6 text-center flex flex-col items-center">
+    <div id="resume-content" className="bg-white font-serif selection:bg-slate-200 selection:text-black relative overflow-hidden">
+      <header className="mb-6 text-center flex flex-col items-center relative z-10">
         <EditableField as="h1" path="fullName" value={data.fullName} onChange={onDataChange} className="text-[28pt] font-bold text-black mb-1 tracking-tight" />
         <EditableField as="p" path="title" value={data.title} onChange={onDataChange} className="text-[12pt] font-bold text-slate-700 uppercase tracking-widest mb-3" />
         
@@ -172,7 +174,7 @@ const AtsExecutive: React.FC<TemplateProps> = ({ data, sectionOrder, customizati
                         path={idx === 0 ? "contactInfo.location" : idx === 1 ? "contactInfo.phone" : idx === 2 ? "contactInfo.email" : "contactInfo.linkedin"} 
                         value={item} 
                         onChange={onDataChange} 
-                        className={idx === 2 || idx === 3 ? "text-blue-700 underline" : ""}
+                        className={idx === 2 || idx === 3 ? "text-emerald-700 underline" : ""}
                     />
                     {idx < contactItems.length - 1 && <span className="text-slate-400">•</span>}
                 </React.Fragment>

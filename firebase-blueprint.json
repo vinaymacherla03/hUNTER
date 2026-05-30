@@ -1,0 +1,144 @@
+{
+  "entities": {
+    "UserMemory": {
+      "title": "UserMemory",
+      "description": "Stores persistent memory and context for a user's AI interactions.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user this memory belongs to."
+        },
+        "preferences": {
+          "type": "string",
+          "description": "Serialized JSON string of user preferences (e.g., tone, formatting)."
+        },
+        "facts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of facts the AI has learned about the user."
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the memory was last updated."
+        }
+      },
+      "required": ["userId", "lastUpdated"]
+    },
+    "RateLimit": {
+      "title": "RateLimit",
+      "description": "Tracks API usage for rate limiting purposes.",
+      "type": "object",
+      "properties": {
+        "count": { "type": "number", "description": "Requests in current window." },
+        "windowStart": { "type": "string", "format": "date-time" },
+        "dailyCount": { "type": "number", "description": "Total requests today." },
+        "lastDailyReset": { "type": "string", "format": "date-time" }
+      },
+      "required": ["count", "windowStart", "dailyCount", "lastDailyReset"]
+    },
+    "DownloadedResume": {
+      "title": "DownloadedResume",
+      "description": "A record of a downloaded or exported resume.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "resumeData": { "type": "object" },
+        "format": { "type": "string", "enum": ["pdf", "txt", "json"] },
+        "downloadedAt": { "type": "string", "format": "date-time" },
+        "template": { "type": "string" }
+      },
+      "required": ["userId", "resumeData", "format", "downloadedAt"]
+    },
+    "JobApplication": {
+      "title": "JobApplication",
+      "description": "A job application record in the CRM.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "company": { "type": "string" },
+        "role": { "type": "string" },
+        "status": { "type": "string", "enum": ["Saved", "Applied", "Interviewing", "Offer", "Rejected"] },
+        "dateAdded": { "type": "string" },
+        "jobDescription": { "type": "string" },
+        "link": { "type": "string" },
+        "location": { "type": "string" },
+        "salary": { "type": "string" },
+        "source": { "type": "string" },
+        "contacts": { "type": "array", "items": { "type": "object" } },
+        "tasks": { "type": "array", "items": { "type": "object" } },
+        "notes": { "type": "string" },
+        "lastInteraction": { "type": "string" }
+      },
+      "required": ["userId", "company", "role", "status", "dateAdded"]
+    },
+    "JobSearch": {
+      "title": "JobSearch",
+      "description": "A cached job search result.",
+      "type": "object",
+      "properties": {
+        "query": { "type": "string" },
+        "location": { "type": "string" },
+        "page": { "type": "number" },
+        "results": { "type": "string", "description": "JSON stringified array of GoogleJob" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "total_count": { "type": "number" }
+      },
+      "required": ["query", "location", "page", "results", "timestamp", "total_count"]
+    },
+    "ResumeVersion": {
+      "title": "ResumeVersion",
+      "description": "A saved version or draft of a user's resume.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string", "description": "User-provided name for this version." },
+        "resumeData": { "type": "object", "description": "The full ResumeData object." },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "isAutoSave": { "type": "boolean" }
+      },
+      "required": ["userId", "name", "resumeData", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/job_searches/{searchId}": {
+      "schema": {
+        "$ref": "#/entities/JobSearch"
+      },
+      "description": "Caches job search results globally to avoid hitting the API repeatedly."
+    },
+    "/user_memories/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserMemory"
+      },
+      "description": "Stores the persistent memory for each user, keyed by their user ID."
+    },
+    "/rate_limits/{userId}": {
+      "schema": {
+        "$ref": "#/entities/RateLimit"
+      },
+      "description": "Tracks rate limits per user."
+    },
+    "/downloaded_resumes/{resumeId}": {
+      "schema": {
+        "$ref": "#/entities/DownloadedResume"
+      },
+      "description": "Stores a copy of every resume that is downloaded or exported."
+    },
+    "/job_applications/{jobId}": {
+      "schema": {
+        "$ref": "#/entities/JobApplication"
+      },
+      "description": "Stores job applications for the CRM."
+    },
+    "/resume_versions/{versionId}": {
+      "schema": {
+        "$ref": "#/entities/ResumeVersion"
+      },
+      "description": "Stores different versions and drafts of a user's resume."
+    }
+  }
+}

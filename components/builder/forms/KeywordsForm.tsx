@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ResumeData } from '../../../types';
 import { Plus, X, Tag, Info } from 'lucide-react';
 
@@ -55,27 +56,32 @@ const KeywordsForm: React.FC<KeywordsFormProps> = ({ data, onDataChange }) => {
                     </div>
                     <button
                         onClick={addKeyword}
-                        className="px-6 rounded-2xl bg-black text-white hover:bg-slate-800 transition-colors flex items-center justify-center"
+                        className="px-6 rounded-2xl bg-black text-white hover:bg-slate-800 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-slate-900/20 active:scale-95 transition-all flex items-center justify-center"
                     >
                         <Plus className="w-6 h-6" />
                     </button>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
+                    <AnimatePresence>
                     {keywords.map((keyword, index) => (
-                        <div 
-                            key={index}
+                        <motion.div 
+                            key={`${keyword}-${index}`}
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
                             className="flex items-center gap-2 px-4 py-2 bg-slate-100 rounded-full text-slate-700 font-bold text-sm group hover:bg-slate-200 transition-colors"
                         >
                             <span>{keyword}</span>
                             <button 
                                 onClick={() => removeKeyword(index)}
-                                className="text-slate-400 hover:text-red-500 transition-colors"
+                                className="text-slate-400 hover:text-rose-500 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-rose-500/50 rounded-full p-0.5 transition-all"
                             >
                                 <X className="w-4 h-4" />
                             </button>
-                        </div>
+                        </motion.div>
                     ))}
+                    </AnimatePresence>
                     {keywords.length === 0 && (
                         <div className="w-full py-12 border-2 border-dashed border-slate-100 rounded-3xl flex flex-col items-center justify-center text-slate-400">
                             <Tag className="w-12 h-12 mb-4 opacity-20" />

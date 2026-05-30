@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { X } from 'lucide-react';
 import SparkleIcon from '../icons/SparkleIcon';
 
 interface RewriteSuggestionModalProps {
@@ -11,13 +12,18 @@ interface RewriteSuggestionModalProps {
     onApply: () => void;
 }
 
-const RewriteSuggestionModal: React.FC<RewriteSuggestionModalProps> = ({ originalText, suggestion, reason, onClose, onApply }) => {
+const RewriteSuggestionModal = React.forwardRef<HTMLDivElement, RewriteSuggestionModalProps>(({ originalText, suggestion, reason, onClose, onApply }, ref) => {
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+        <motion.div 
+            ref={ref}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm" 
+            role="dialog" 
+            aria-modal="true"
+        >
+            <div
                 className="absolute inset-0 bg-black/60 backdrop-blur-sm"
                 onClick={onClose}
             />
@@ -26,44 +32,82 @@ const RewriteSuggestionModal: React.FC<RewriteSuggestionModalProps> = ({ origina
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
                 transition={{ duration: 0.3, ease: 'easeOut' }}
-                className="relative z-10 w-full max-w-2xl bg-white rounded-xl shadow-2xl flex flex-col"
+                className="relative z-10 w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col"
             >
-                <header className="flex items-center justify-between p-4 border-b border-slate-200">
-                    <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-primary-100 text-primary">
-                            <SparkleIcon className="w-5 h-5" />
+                {/* Header with Gradient */}
+                <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-8 text-white relative overflow-hidden">
+                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10" />
+                    <div className="relative z-10 flex items-center justify-between">
+                        <div className="flex items-center gap-5">
+                            <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-md border border-white/10">
+                                <SparkleIcon className="w-8 h-8" />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-black tracking-tight uppercase">AI Smart Rewrite</h2>
+                                <p className="text-slate-400 text-sm font-medium mt-1">Enhancing your impact with proprietary AI.</p>
+                            </div>
                         </div>
-                        <h2 className="text-lg font-semibold text-slate-800">AI Suggestion</h2>
-                    </div>
-                    <button onClick={onClose} className="p-1.5 rounded-full text-slate-500 hover:bg-slate-100" aria-label="Close modal">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
-                    </button>
-                </header>
-
-                <div className="p-6 space-y-6">
-                    <div>
-                        <p className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Your Original</p>
-                        <p className="text-sm text-slate-600 bg-slate-50 p-3 rounded-md border border-slate-200">{originalText}</p>
-                    </div>
-
-                    <div>
-                        <p className="text-xs font-semibold text-primary mb-2 uppercase tracking-wider">AI-Powered Suggestion</p>
-                        <p className="text-sm text-slate-800 bg-primary-50 p-3 rounded-md border border-primary-200">{suggestion}</p>
-                    </div>
-
-                    <div>
-                        <p className="text-xs font-semibold text-emerald-600 mb-2 uppercase tracking-wider">Why it's better</p>
-                        <p className="text-sm text-emerald-800 bg-emerald-50 p-3 rounded-md border border-emerald-200">{reason}</p>
+                        <button 
+                            onClick={onClose} 
+                            className="p-2.5 rounded-xl text-white/50 hover:text-white hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-white/20" 
+                            aria-label="Close modal"
+                        >
+                            <X className="w-6 h-6" />
+                        </button>
                     </div>
                 </div>
 
-                <footer className="flex justify-end gap-3 p-4 bg-slate-50 border-t border-slate-200 rounded-b-xl">
-                    <button onClick={onClose} className="px-4 py-2 text-sm font-semibold rounded-lg text-slate-600 bg-white border border-slate-300 hover:bg-slate-100">Cancel</button>
-                    <button onClick={onApply} className="px-4 py-2 text-sm font-semibold rounded-lg text-white bg-primary hover:bg-primary-700">Use Suggestion</button>
+                <div className="p-6 sm:p-8 space-y-8 bg-slate-50/50 overflow-y-auto custom-scrollbar">
+                    <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Your Original</span>
+                            <div className="h-px flex-grow bg-slate-200" />
+                        </div>
+                        <div className="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm">
+                            <p className="text-sm text-slate-600 leading-relaxed font-medium">{originalText}</p>
+                        </div>
+                    </div>
+
+                    <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em]">AI-Powered Suggestion</span>
+                            <div className="h-px flex-grow bg-emerald-100" />
+                        </div>
+                        <div className="p-5 bg-emerald-50/50 rounded-2xl border border-emerald-100 shadow-sm ring-1 ring-emerald-500/10">
+                            <p className="text-sm text-slate-900 leading-relaxed font-bold">{suggestion}</p>
+                        </div>
+                    </div>
+
+                    <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em]">Strategic Rationale</span>
+                            <div className="h-px flex-grow bg-emerald-100" />
+                        </div>
+                        <div className="p-5 bg-emerald-50/50 rounded-2xl border border-emerald-100 shadow-sm">
+                            <p className="text-sm text-emerald-900 leading-relaxed font-medium italic">"{reason}"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <footer className="flex justify-end gap-4 p-6 sm:p-8 bg-white border-t border-slate-100 shrink-0">
+                    <button 
+                        onClick={onClose} 
+                        className="px-6 py-3 text-xs font-black uppercase tracking-widest rounded-xl text-slate-500 hover:bg-slate-50 transition-all active:scale-95"
+                    >
+                        Discard
+                    </button>
+                    <button 
+                        onClick={onApply} 
+                        className="px-8 py-3 text-xs font-black uppercase tracking-widest rounded-xl text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-600/20 transition-all active:scale-95"
+                    >
+                        Apply Suggestion
+                    </button>
                 </footer>
             </motion.div>
-        </div>
+        </motion.div>
     );
-};
+});
+
+RewriteSuggestionModal.displayName = 'RewriteSuggestionModal';
 
 export default RewriteSuggestionModal;

@@ -1,18 +1,12 @@
 
 import { findMatchingJobs } from './geminiService';
 import { scheduler } from '../utils/scheduler';
-
-// Fix for missing Jest types in this context
-declare const jest: any;
-declare const describe: any;
-declare const it: any;
-declare const beforeEach: any;
-declare const expect: any;
+import { vi, describe, it, beforeEach, expect } from 'vitest';
 
 // Mock Scheduler to avoid real API calls
-jest.mock('../utils/scheduler', () => ({
+vi.mock('../utils/scheduler', () => ({
     scheduler: {
-        add: jest.fn()
+        add: vi.fn()
     }
 }));
 
@@ -29,7 +23,7 @@ const mockResumeData = {
 describe('geminiService', () => {
     describe('findMatchingJobs', () => {
         beforeEach(() => {
-            jest.clearAllMocks();
+            vi.clearAllMocks();
         });
 
         it('should correctly parse a clean JSON response', async () => {
@@ -39,7 +33,7 @@ describe('geminiService', () => {
                     { company: "CompA", role: "Dev", link: "http://a.com", summary: "Good job" }
                 ]
             };
-            (scheduler.add as any).mockResolvedValue({ text: JSON.stringify(mockResponse) });
+            (scheduler.add as any).mockResolvedValue({ text: () => JSON.stringify(mockResponse) });
 
             const result = await findMatchingJobs(mockResumeData, 'NY', 'Dev', { remote: false, salary: '', experience: '' });
 
@@ -55,7 +49,7 @@ describe('geminiService', () => {
                 jobs: []
             };
             const text = "Here is the data:\n```json\n" + JSON.stringify(mockResponse) + "\n```";
-            (scheduler.add as any).mockResolvedValue({ text });
+            (scheduler.add as any).mockResolvedValue({ text: () => text });
 
             const result = await findMatchingJobs(mockResumeData, 'NY', 'Dev', { remote: false, salary: '', experience: '' });
 
@@ -63,24 +57,24 @@ describe('geminiService', () => {
         });
 
         it('should handle malformed JSON gracefully', async () => {
-            (scheduler.add as any).mockResolvedValue({ text: "This is not JSON" });
+            (scheduler.add as any).mockResolvedValue({ text: () => "This is not JSON" });
 
             const result = await findMatchingJobs(mockResumeData, 'NY', 'Dev', { remote: false, salary: '', experience: '' });
 
-            // parseJsonResult returns {} on failure
-            expect(result).toEqual({});
+            // findMatchingJobs returns a default object on failure
+            expect(result).toEqual({ marketSummary: "Could not retrieve market signals.", jobs: [] });
         });
 
         it('should generate deterministic IDs for jobs', async () => {
             const mockResponse = {
                 jobs: [{ company: "A", role: "B", link: "http://a.com" }]
             };
-            (scheduler.add as any).mockResolvedValue({ text: JSON.stringify(mockResponse) });
+            (scheduler.add as any).mockResolvedValue({ text: () => JSON.stringify(mockResponse) });
 
             const result1 = await findMatchingJobs(mockResumeData, 'NY', 'Dev', { remote: false, salary: '', experience: '' });
             
             // Mock again for second call
-            (scheduler.add as any).mockResolvedValue({ text: JSON.stringify(mockResponse) });
+            (scheduler.add as any).mockResolvedValue({ text: () => JSON.stringify(mockResponse) });
             const result2 = await findMatchingJobs(mockResumeData, 'NY', 'Dev', { remote: false, salary: '', experience: '' });
 
             expect(result1.jobs[0].id).toBe(result2.jobs[0].id);

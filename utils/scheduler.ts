@@ -1,3 +1,4 @@
+import { checkRateLimit } from '../services/rateLimiter';
 
 type Task<T> = () => Promise<T>;
 
@@ -5,7 +6,7 @@ export class RequestScheduler {
   private queue: { task: Task<any>; resolve: (value: any) => void; reject: (reason?: any) => void; retries: number }[] = [];
   private isProcessing = false;
   private lastRequestTime = 0;
-  private minDelay = 3000; // Increased to 3s to be even more conservative with quotas
+  private minDelay = 500; // Reduced to 500ms to allow for higher throughput (2 req/s)
 
   add<T>(task: Task<T>): Promise<T> {
     return new Promise((resolve, reject) => {
@@ -19,7 +20,7 @@ export class RequestScheduler {
 
     this.isProcessing = true;
     
-    // 1. Rate Limiting
+    // 1. Rate Limiting (Client-side delay)
     const now = Date.now();
     const timeSinceLast = now - this.lastRequestTime;
     if (timeSinceLast < this.minDelay) {
@@ -33,7 +34,13 @@ export class RequestScheduler {
     }
 
     try {
-      // 2. Execute Task
+      // 2. Persistent Rate Limiting (Firestore)
+      // Only check on the first attempt, not on retries
+      if (item.retries === 0) {
+        await checkRateLimit();
+      }
+
+      // 3. Execute Task
       const result = await item.task();
       this.lastRequestTime = Date.now();
       item.resolve(result);
@@ -47,12 +54,14 @@ export class RequestScheduler {
       }
 
       const isRateLimit = msg.includes('429') || msg.includes('quota') || msg.includes('resource_exhausted');
-      const isServerOverload = msg.includes('503') || msg.includes('500') || msg.includes('overloaded');
+      const isServerOverload = msg.includes('503') || msg.includes('500') || msg.includes('502') || msg.includes('504') || msg.includes('overloaded');
+      const isNetworkError = msg.includes('failed to fetch') || msg.includes('network error') || msg.includes('load failed');
+      const isServerLoading = msg.includes('server_loading_html') || msg.includes('invalid_json_response');
 
-      if ((isRateLimit || isServerOverload) && item.retries < 6) {
+      if ((isRateLimit || isServerOverload || isNetworkError || isServerLoading) && item.retries < 6) {
         // More aggressive exponential backoff for persistent limit issues
         const backoff = Math.pow(2.5, item.retries + 2) * 1000; 
-        console.warn(`[Scheduler] Quota/Server error detected. Retrying in ${Math.round(backoff/1000)}s... (Attempt ${item.retries + 1}/6)`);
+        console.warn(`[Scheduler] Quota/Server/Loading error detected. Retrying in ${Math.round(backoff/1000)}s... (Attempt ${item.retries + 1}/6)`);
         
         await new Promise(r => setTimeout(r, backoff));
         

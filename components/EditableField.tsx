@@ -6,6 +6,7 @@ import { useResumeContext } from './builder/ResumeContext';
 import SparkleIcon from './icons/SparkleIcon';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
+import GranularLoadingText from './builder/GranularLoadingText';
 
 type ElementType = 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'span' | 'div' | 'li' | 'a';
 
@@ -40,12 +41,13 @@ const EditableField = <T extends ElementType = 'span'>({
   const [isFocused, setIsFocused] = useState(false);
   const [showAiTools, setShowAiTools] = useState(false);
   
-  const { onRewrite, isThinkingPath } = useResumeContext();
-  const isAiEnabled = (typeof value === 'string' && value.length > 10) && (path.includes('summary') || path.includes('description'));
+  const { onRewrite, isThinkingPath, aiSuggestions, onApplySuggestion, onClearSuggestion, readOnly } = useResumeContext();
+  const isAiEnabled = !readOnly && (typeof value === 'string' && value.length > 10) && (path.includes('summary') || path.includes('description'));
   const isThinking = isThinkingPath === path;
+  const currentSuggestion = aiSuggestions[path];
 
   // Only check grammar for non-short fields and regular text when focused
-  const shouldCheckGrammar = !validation && (typeof value === 'string' && value.length > 15);
+  const shouldCheckGrammar = !readOnly && !validation && (typeof value === 'string' && value.length > 15);
   const { isChecking, result, clearParams } = useGrammarCheck(typeof value === 'string' ? value : '', shouldCheckGrammar && isFocused);
 
   useEffect(() => {
@@ -53,21 +55,24 @@ const EditableField = <T extends ElementType = 'span'>({
   }, [value]);
 
   useEffect(() => {
-    if (isFocused && elementRef.current) {
+    if (isFocused && elementRef.current && !readOnly) {
       elementRef.current.focus();
     }
-  }, [isFocused]);
+  }, [isFocused, readOnly]);
   
   const handleFocus = () => {
+    if (readOnly) return;
     setError(null);
     setIsFocused(true);
   };
 
   const handleViewClick = () => {
+    if (readOnly) return;
     setIsFocused(true);
   };
 
   const handleBlur = (e: React.FocusEvent) => {
+    if (readOnly) return;
     // Don't hide if moving to the AI tool buttons
     if (e.relatedTarget && (e.relatedTarget as HTMLElement).closest('.ai-tools-container')) {
         return;
@@ -115,10 +120,12 @@ const EditableField = <T extends ElementType = 'span'>({
   };
 
   const handleInput = (e: React.FormEvent<HTMLElement>) => {
+    if (readOnly) return;
     setCurrentValue(e.currentTarget.innerText);
   };
 
   const handleApplyGrammar = (corrected: string) => {
+      if (readOnly) return;
       onChange(path, corrected);
       if (elementRef.current) {
           elementRef.current.innerText = corrected;
@@ -127,10 +134,17 @@ const EditableField = <T extends ElementType = 'span'>({
   };
 
   const handleAiAction = (mode: 'IMPACT' | 'CONCISE') => {
+      if (readOnly) return;
       if (typeof value === 'string') {
           onRewrite(path, value, path.includes('summary') ? 'summary' : 'bullet', mode);
           setShowAiTools(false);
       }
+  };
+
+  const handleApplyAiSuggestion = () => {
+      if (readOnly || !currentSuggestion) return;
+      onApplySuggestion(path, currentSuggestion.suggestion);
+      setShowAiTools(false);
   };
 
   const renderContent = () => {
@@ -161,18 +175,18 @@ const EditableField = <T extends ElementType = 'span'>({
     return (
       <Component
       ref={elementRef as any}
-      contentEditable={true}
+      contentEditable={!readOnly}
       suppressContentEditableWarning={true}
-      spellCheck={true}
+      spellCheck={!readOnly}
       onBlur={handleBlur}
       onFocus={handleFocus}
       onInput={handleInput}
       onMouseEnter={() => isAiEnabled && !isFocused && setShowAiTools(true)}
       onMouseLeave={() => isAiEnabled && !isFocused && setShowAiTools(false)}
-      className={`${className} focus:outline-none rounded-sm transition-all p-0.5 -m-0.5 ${
+      className={`${className} focus:outline-none rounded-sm transition-all duration-300 p-0.5 -m-0.5 ${
         error
-          ? 'bg-red-100/50 ring-1 ring-red-500'
-          : 'focus:bg-blue-50 focus:ring-1 focus:ring-blue-300'
+          ? 'bg-red-100/50 ring-2 ring-red-500 shadow-[0_0_15px_rgba(239,68,68,0.2)]'
+          : 'focus:bg-emerald-50/50 focus:ring-2 focus:ring-emerald-400/50 focus:shadow-[0_0_20px_rgba(16,185,129,0.1)]'
       } ${result ? 'decoration-amber-400 decoration-wavy underline underline-offset-2' : ''}`}
       {...rest}
       title={error || undefined}
@@ -192,10 +206,11 @@ const EditableField = <T extends ElementType = 'span'>({
         {renderContent()}
         <GrammarIndicator 
             isChecking={isChecking} 
+            isFocused={isFocused && shouldCheckGrammar}
             result={result} 
             onApply={handleApplyGrammar} 
             onDismiss={clearParams} 
-            className={`${isAiEnabled && (isFocused || showAiTools) ? 'top-1 right-12' : 'top-1 right-1'}`}
+            className={`absolute z-10 ${isAiEnabled && (isFocused || showAiTools) ? 'top-1 right-12' : 'top-1 right-1'}`}
         />
         
         {/* AI Tools Floating Toolbar */}
@@ -206,7 +221,7 @@ const EditableField = <T extends ElementType = 'span'>({
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 5, scale: 0.95 }}
                     transition={{ duration: 0.3, ease: 'easeOut' }}
-                    className="absolute -top-9 right-0 z-50 flex items-center gap-1 bg-white rounded-full shadow-lg border border-slate-100 p-1 pr-2 ai-tools-container print-hide"
+                    className="absolute -top-10 right-0 z-50 flex items-center gap-1 bg-white/90 backdrop-blur-xl rounded-2xl shadow-[0_10px_30px_-5px_rgba(0,0,0,0.1),0_0_0_1px_rgba(0,0,0,0.05)] p-1.5 pr-2.5 ai-tools-container print-hide"
                     onMouseEnter={() => setShowAiTools(true)}
                     onMouseLeave={() => !isFocused && setShowAiTools(false)}
                     contentEditable={false}
@@ -214,7 +229,31 @@ const EditableField = <T extends ElementType = 'span'>({
                      {isThinking ? (
                         <div className="flex items-center gap-2 px-2">
                             <svg className="animate-spin h-3.5 w-3.5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                            <span className="text-[10px] font-medium text-slate-500">Thinking...</span>
+                            <GranularLoadingText 
+                                messages={["Analyzing text...", "Generating suggestions...", "Refining..."]} 
+                                intervalMs={1500}
+                            />
+                        </div>
+                     ) : currentSuggestion ? (
+                        <div className="flex items-center gap-1">
+                            <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center shadow-sm">
+                                <SparkleIcon className="w-3.5 h-3.5 text-emerald-600" />
+                            </div>
+                            <button 
+                                onClick={handleApplyAiSuggestion}
+                                className="text-[10px] font-bold text-emerald-700 hover:bg-emerald-50 px-2 py-1 rounded transition-colors whitespace-nowrap flex items-center gap-1"
+                                aria-label="Apply AI suggestion"
+                            >
+                                Apply Suggestion
+                            </button>
+                            <div className="w-px h-3 bg-slate-200 mx-0.5"></div>
+                            <button 
+                                onClick={() => onClearSuggestion(path)}
+                                className="text-[10px] font-semibold text-slate-400 hover:text-slate-600 px-2 py-1 rounded transition-colors"
+                                aria-label="Discard suggestion"
+                            >
+                                Discard
+                            </button>
                         </div>
                      ) : (
                          <>

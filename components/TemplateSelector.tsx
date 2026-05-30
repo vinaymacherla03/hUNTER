@@ -5,6 +5,8 @@ import { templates } from './templates/templateData';
 import { TemplateKey, ResumeData } from '../types';
 import ResumePreview from './ResumePreview';
 
+import Tooltip from './Tooltip';
+
 interface TemplateSelectorProps {
     currentTemplate: TemplateKey;
     onTemplateChange: (template: TemplateKey) => void;
@@ -25,21 +27,36 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({ currentTemplate, on
         return templates.filter(t => t.categories.includes(activeCategory));
     }, [activeCategory]);
 
+    const categoryTooltips: Record<string, string> = {
+        'All': 'View all available resume templates',
+        'True ATS': 'Strictly parsed by ATS without layout issues',
+        'Modern': 'Contemporary designs with balanced colors & neat layouts',
+        'Professional': 'Classic, authoritative layouts for corporate roles',
+        'Creative': 'Bold designs for design & creative fields',
+        'Minimalist': 'Clean templates focused on raw content & whitespace',
+        'Executive': 'Sophisticated templates emphasizing leadership impact'
+    };
+
     return (
         <div className="space-y-8">
             <div className="flex flex-wrap gap-2 pb-4 border-b border-slate-100">
                 {categories.map(cat => (
-                    <button
-                        key={cat}
-                        onClick={() => setActiveCategory(cat)}
-                        className={`px-5 py-2 rounded-full text-[11px] font-black uppercase tracking-widest transition-all ${
-                            activeCategory === cat 
-                            ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-200 scale-105' 
-                            : 'bg-white text-slate-500 hover:text-emerald-600 hover:border-emerald-200 border border-slate-200'
-                        }`}
+                    <Tooltip 
+                        key={cat} 
+                        content={categoryTooltips[cat] || `View ${cat} templates`}
+                        position="bottom"
                     >
-                        {cat}
-                    </button>
+                        <button
+                            onClick={() => setActiveCategory(cat)}
+                            className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all ${
+                                activeCategory === cat 
+                                ? 'bg-emerald-600 text-white shadow-sm' 
+                                : 'bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-slate-200'
+                            }`}
+                        >
+                            {cat}
+                        </button>
+                    </Tooltip>
                 ))}
             </div>
 
@@ -78,18 +95,19 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({ currentTemplate, on
                                             sectionOrder={['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'awards', 'keywords']} 
                                             sectionVisibility={{ summary: true, experience: true, education: true, skills: true, projects: true, certifications: true, awards: true, keywords: true }} 
                                             onDataChange={() => {}} 
+                                            readOnly={true}
                                         />
                                     </div>
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-8">
-                                        <div className="px-4 py-2 bg-white text-slate-900 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-transform">
+                                        <div className="px-4 py-2 bg-white text-slate-900 rounded-full text-xs font-semibold shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-transform">
                                             Select Template
                                         </div>
                                     </div>
                                 </div>
                                 <div className="p-4 bg-white border-t border-slate-50 flex items-center justify-between">
                                     <div className="flex flex-col gap-0.5">
-                                        <span className="text-xs font-black text-slate-900 uppercase tracking-wider">{template.name}</span>
-                                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{template.categories[0]}</span>
+                                        <span className="text-sm font-semibold text-slate-900">{template.name}</span>
+                                        <span className="text-xs text-slate-500">{template.categories[0]}</span>
                                     </div>
                                     {isActive && (
                                         <div className="w-6 h-6 rounded-full bg-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-200">

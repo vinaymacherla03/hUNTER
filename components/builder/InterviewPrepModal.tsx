@@ -60,7 +60,14 @@ const InterviewPrepModal: React.FC<InterviewPrepModalProps> = ({ questions, role
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" role="dialog" aria-modal="true">
+        <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" 
+            role="dialog" 
+            aria-modal="true"
+        >
             <motion.div 
                 initial={{ opacity: 0 }} 
                 animate={{ opacity: 1 }} 
@@ -78,8 +85,8 @@ const InterviewPrepModal: React.FC<InterviewPrepModalProps> = ({ questions, role
                 <aside className="w-full md:w-80 lg:w-96 bg-slate-50 border-b md:border-b-0 md:border-r border-slate-200 flex flex-col shrink-0">
                     <div className="p-6 border-b border-slate-200 bg-white">
                         <div className="flex items-center gap-3 mb-2">
-                            <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center border border-indigo-100/50">
-                                <MessageSquare className="w-5 h-5 text-indigo-600" />
+                            <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center border border-emerald-100/50">
+                                <MessageSquare className="w-5 h-5 text-emerald-600" />
                             </div>
                             <div>
                                 <h2 className="text-lg font-black text-slate-900 tracking-tight">Interview Prep</h2>
@@ -98,19 +105,19 @@ const InterviewPrepModal: React.FC<InterviewPrepModalProps> = ({ questions, role
                                 onClick={() => { setActiveIndex(idx); resetState(); }}
                                 className={`w-full text-left p-4 rounded-2xl border transition-all duration-200 group ${
                                     activeIndex === idx 
-                                    ? 'bg-white border-indigo-500 ring-2 ring-indigo-500/20 shadow-md' 
-                                    : 'bg-white border-slate-200 hover:border-indigo-300 hover:shadow-sm text-slate-600'
+                                    ? 'bg-white border-emerald-500 ring-2 ring-emerald-500/20 shadow-md' 
+                                    : 'bg-white border-slate-200 hover:border-emerald-300 hover:shadow-sm text-slate-600'
                                 }`}
                             >
                                 <div className="flex justify-between items-center mb-2">
                                     <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border ${
-                                        q.type === 'Behavioral' ? 'bg-blue-50 text-blue-600 border-blue-100' :
+                                        q.type === 'Behavioral' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
                                         q.type === 'Technical' ? 'bg-amber-50 text-amber-600 border-amber-100' :
                                         'bg-emerald-50 text-emerald-600 border-emerald-100'
                                     }`}>
                                         {q.type}
                                     </span>
-                                    <span className={`text-[10px] font-black ${activeIndex === idx ? 'text-indigo-400' : 'text-slate-300 group-hover:text-slate-400'}`}>#{idx + 1}</span>
+                                    <span className={`text-[10px] font-black ${activeIndex === idx ? 'text-emerald-400' : 'text-slate-300 group-hover:text-slate-400'}`}>#{idx + 1}</span>
                                 </div>
                                 <p className={`text-sm font-bold line-clamp-2 leading-snug ${activeIndex === idx ? 'text-slate-900' : 'text-slate-500 group-hover:text-slate-700'}`}>
                                     {q.question}
@@ -128,7 +135,7 @@ const InterviewPrepModal: React.FC<InterviewPrepModalProps> = ({ questions, role
                             {/* Question Header */}
                             <div className="mb-8">
                                 <div className="flex items-center gap-3 mb-4">
-                                    <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest px-3 py-1.5 bg-indigo-50 rounded-lg border border-indigo-100/50">
+                                    <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest px-3 py-1.5 bg-emerald-50 rounded-lg border border-emerald-100/50">
                                         Question {activeIndex + 1} of {questions.length}
                                     </span>
                                 </div>
@@ -141,9 +148,9 @@ const InterviewPrepModal: React.FC<InterviewPrepModalProps> = ({ questions, role
                             <div className="mb-8">
                                 <button 
                                     onClick={() => setShowTip(!showTip)}
-                                    className="flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-700 transition-colors mb-3 group"
+                                    className="flex items-center gap-2 text-sm font-bold text-emerald-600 hover:text-emerald-700 transition-colors mb-3 group"
                                 >
-                                    <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
+                                    <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
                                         <Lightbulb className="w-4 h-4" />
                                     </div>
                                     {showTip ? 'Hide Interviewer Tip' : 'Reveal Interviewer Tip'}
@@ -157,7 +164,7 @@ const InterviewPrepModal: React.FC<InterviewPrepModalProps> = ({ questions, role
                                             exit={{ height: 0, opacity: 0 }}
                                             className="overflow-hidden"
                                         >
-                                            <div className="p-5 bg-indigo-50/50 border border-indigo-100 rounded-2xl text-sm text-indigo-900/80 leading-relaxed font-medium shadow-inner">
+                                            <div className="p-5 bg-emerald-50/50 border border-emerald-100 rounded-2xl text-sm text-emerald-900/80 leading-relaxed font-medium shadow-inner">
                                                 {currentQuestion.tip}
                                             </div>
                                         </motion.div>
@@ -175,7 +182,7 @@ const InterviewPrepModal: React.FC<InterviewPrepModalProps> = ({ questions, role
                                     value={userAnswer}
                                     onChange={(e) => setUserAnswer(e.target.value)}
                                     disabled={isEvaluated || isAnalyzing}
-                                    className="w-full h-48 p-5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none resize-none text-slate-700 text-base leading-relaxed disabled:bg-slate-100 disabled:text-slate-500 transition-all shadow-inner"
+                                    className="w-full h-48 p-5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none resize-none text-slate-700 text-base leading-relaxed disabled:bg-slate-100 disabled:text-slate-500 transition-all shadow-inner"
                                     placeholder="Draft your response here as if you were speaking to the interviewer (STAR method recommended)..."
                                 />
                                 
@@ -237,37 +244,72 @@ const InterviewPrepModal: React.FC<InterviewPrepModalProps> = ({ questions, role
                                                 <h4 className="text-xs font-black text-emerald-600 uppercase tracking-widest mb-6 flex items-center gap-2">
                                                     <CheckCircle2 className="w-4 h-4" /> Strengths
                                                 </h4>
-                                                <ul className="space-y-4">
+                                                <motion.ul 
+                                                    initial="hidden"
+                                                    animate="visible"
+                                                    variants={{
+                                                        hidden: { opacity: 0 },
+                                                        visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+                                                    }}
+                                                    className="space-y-4"
+                                                >
                                                     {feedback.strengths.map((s, i) => (
-                                                        <li key={i} className="text-sm text-emerald-900/80 font-medium flex items-start gap-3 leading-relaxed">
+                                                        <motion.li 
+                                                            key={i} 
+                                                            variants={{
+                                                                hidden: { opacity: 0, x: -10 },
+                                                                visible: { opacity: 1, x: 0 }
+                                                            }}
+                                                            className="text-sm text-emerald-900/80 font-medium flex items-start gap-3 leading-relaxed"
+                                                        >
                                                             <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-2 shrink-0" />
                                                             {s}
-                                                        </li>
+                                                        </motion.li>
                                                     ))}
-                                                </ul>
+                                                </motion.ul>
                                             </div>
                                             <div className="bg-rose-50/50 p-6 sm:p-8 rounded-3xl border border-rose-100">
                                                 <h4 className="text-xs font-black text-rose-600 uppercase tracking-widest mb-6 flex items-center gap-2">
                                                     <AlertCircle className="w-4 h-4" /> Areas to Improve
                                                 </h4>
-                                                <ul className="space-y-4">
+                                                <motion.ul 
+                                                    initial="hidden"
+                                                    animate="visible"
+                                                    variants={{
+                                                        hidden: { opacity: 0 },
+                                                        visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+                                                    }}
+                                                    className="space-y-4"
+                                                >
                                                     {feedback.improvements.map((s, i) => (
-                                                        <li key={i} className="text-sm text-rose-900/80 font-medium flex items-start gap-3 leading-relaxed">
+                                                        <motion.li 
+                                                            key={i} 
+                                                            variants={{
+                                                                hidden: { opacity: 0, x: -10 },
+                                                                visible: { opacity: 1, x: 0 }
+                                                            }}
+                                                            className="text-sm text-rose-900/80 font-medium flex items-start gap-3 leading-relaxed"
+                                                        >
                                                             <div className="w-1.5 h-1.5 rounded-full bg-rose-400 mt-2 shrink-0" />
                                                             {s}
-                                                        </li>
+                                                        </motion.li>
                                                     ))}
-                                                </ul>
+                                                </motion.ul>
                                             </div>
                                         </div>
 
-                                        <div className="bg-gradient-to-br from-indigo-50 to-blue-50 p-6 sm:p-8 rounded-3xl border border-indigo-100/50 shadow-sm relative overflow-hidden">
-                                            <SparkleIcon className="absolute top-4 right-4 w-24 h-24 text-indigo-500/5" />
-                                            <h4 className="text-xs font-black text-indigo-600 uppercase tracking-widest mb-4 flex items-center gap-2 relative z-10">
+                                        <motion.div 
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: 0.3 }}
+                                            className="bg-gradient-to-br from-emerald-50 to-emerald-50 p-6 sm:p-8 rounded-3xl border border-emerald-100/50 shadow-sm relative overflow-hidden"
+                                        >
+                                            <SparkleIcon className="absolute top-4 right-4 w-24 h-24 text-emerald-500/5" />
+                                            <h4 className="text-xs font-black text-emerald-600 uppercase tracking-widest mb-4 flex items-center gap-2 relative z-10">
                                                 <SparkleIcon className="w-4 h-4" /> Refined Answer Example
                                             </h4>
-                                            <p className="text-base text-indigo-950 leading-relaxed font-medium relative z-10">"{feedback.refinedAnswer}"</p>
-                                        </div>
+                                            <p className="text-base text-emerald-950 leading-relaxed font-medium relative z-10">"{feedback.refinedAnswer}"</p>
+                                        </motion.div>
 
                                         <div className="sm:hidden flex justify-center mt-4">
                                             <button 
@@ -296,7 +338,7 @@ const InterviewPrepModal: React.FC<InterviewPrepModalProps> = ({ questions, role
                         
                         <div className="hidden sm:flex gap-1">
                             {questions.map((_, idx) => (
-                                <div key={idx} className={`w-2 h-2 rounded-full ${activeIndex === idx ? 'bg-indigo-600' : 'bg-slate-200'}`} />
+                                <div key={idx} className={`w-2 h-2 rounded-full ${activeIndex === idx ? 'bg-emerald-600' : 'bg-slate-200'}`} />
                             ))}
                         </div>
 
@@ -317,7 +359,7 @@ const InterviewPrepModal: React.FC<InterviewPrepModalProps> = ({ questions, role
                     <X className="w-5 h-5" />
                 </button>
             </motion.div>
-        </div>
+        </motion.div>
     );
 };
 

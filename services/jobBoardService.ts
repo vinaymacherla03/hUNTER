@@ -1,5 +1,6 @@
 
 import { JobApplication } from '../types';
+import { auth } from './firebase';
 
 const INDEED_CONNECTED_KEY = 'indeed_connected';
 
@@ -77,6 +78,7 @@ export const JobBoardService = {
                     fetchedJobs.push(
                         { 
                             id: `in-${Date.now()}-1`, 
+                            userId: auth.currentUser?.uid || 'guest',
                             company: 'StartUp Inc', 
                             role: 'Frontend Developer', 
                             status: 'Saved', 

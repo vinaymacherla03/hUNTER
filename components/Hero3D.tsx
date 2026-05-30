@@ -6,10 +6,13 @@ type Module = 'optimizer' | 'pipeline' | 'intelligence';
 
 const GlassCard = ({ children, className, style }: { children?: React.ReactNode; className?: string; style?: any }) => (
     <div 
-        className={`bg-white/90 backdrop-blur-3xl border border-white shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] rounded-[2.5rem] ${className}`}
+        className={`bg-slate-900/90 backdrop-blur-2xl border border-slate-700/50 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.1)] rounded-[2.5rem] overflow-hidden ${className}`}
         style={style}
     >
-        {children}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/0 pointer-events-none" />
+        <div className="relative z-10 h-full flex flex-col">
+            {children}
+        </div>
     </div>
 );
 
@@ -86,32 +89,32 @@ const Hero3D = () => {
                                 <motion.div key="opt" {...tabVariants} transition={{ duration: 0.5 }} className="h-full flex flex-col">
                                     <div className="flex justify-between items-start mb-6 sm:mb-8">
                                         <div>
-                                            <h3 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tighter">Career Score</h3>
+                                            <h3 className="text-xl sm:text-3xl font-black text-white tracking-tighter">Career Score</h3>
                                             <p className="text-[10px] sm:text-sm font-bold text-slate-400 uppercase tracking-widest mt-1">Profile Integrity</p>
                                         </div>
-                                        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center">
-                                            <span className="text-xl sm:text-2xl font-black text-emerald-600">92</span>
+                                        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+                                            <span className="text-xl sm:text-2xl font-black text-emerald-400">92</span>
                                         </div>
                                     </div>
                                     
                                     <div className="space-y-4 sm:space-y-6 flex-1">
-                                        <div className="p-4 sm:p-5 bg-slate-50 rounded-2xl sm:rounded-3xl border border-slate-100 shadow-inner">
+                                        <div className="p-4 sm:p-5 bg-slate-800/50 rounded-2xl sm:rounded-3xl border border-slate-700/50 shadow-inner">
                                             <div className="flex justify-between mb-2">
                                                 <span className="text-[8px] sm:text-[10px] font-black text-slate-400 uppercase">Impact Quantified</span>
-                                                <span className="text-[8px] sm:text-[10px] font-black text-emerald-500">OPTIMAL</span>
+                                                <span className="text-[8px] sm:text-[10px] font-black text-emerald-400">OPTIMAL</span>
                                             </div>
-                                            <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
+                                            <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden">
                                                 <motion.div initial={{ width: 0 }} animate={{ width: '85%' }} className="h-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
                                             </div>
                                         </div>
                                         <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                                            <div className="p-3 sm:p-4 bg-white rounded-xl sm:rounded-2xl border border-slate-100 shadow-sm text-center sm:text-left">
+                                            <div className="p-3 sm:p-4 bg-slate-800/50 rounded-xl sm:rounded-2xl border border-slate-700/50 shadow-sm text-center sm:text-left">
                                                 <p className="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase mb-1">Keywords</p>
-                                                <p className="text-base sm:text-xl font-black text-slate-900 tracking-tight">48/50</p>
+                                                <p className="text-base sm:text-xl font-black text-white tracking-tight">48/50</p>
                                             </div>
-                                            <div className="p-3 sm:p-4 bg-white rounded-xl sm:rounded-2xl border border-slate-100 shadow-sm text-center sm:text-left">
+                                            <div className="p-3 sm:p-4 bg-slate-800/50 rounded-xl sm:rounded-2xl border border-slate-700/50 shadow-sm text-center sm:text-left">
                                                 <p className="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase mb-1">Readability</p>
-                                                <p className="text-base sm:text-xl font-black text-slate-900 tracking-tight">Grade 9</p>
+                                                <p className="text-base sm:text-xl font-black text-white tracking-tight">Grade 9</p>
                                             </div>
                                         </div>
                                     </div>
@@ -120,32 +123,32 @@ const Hero3D = () => {
 
                             {activeTab === 'pipeline' && (
                                 <motion.div key="pipe" {...tabVariants} transition={{ duration: 0.5 }} className="h-full flex flex-col">
-                                    <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tighter mb-4 sm:mb-6">Active Pipeline</h3>
+                                    <h3 className="text-xl sm:text-2xl font-black text-white tracking-tighter mb-4 sm:mb-6">Active Pipeline</h3>
                                     <div className="space-y-3 sm:space-y-4">
                                         {[
                                             { co: 'Stripe', role: 'Staff Designer', status: 'Final', color: 'blue' },
                                             { co: 'Linear', role: 'Product Architect', status: 'Offer', color: 'emerald' },
                                             { co: 'Airbnb', role: 'Sr. PM', status: 'Tech', color: 'indigo' }
                                         ].map((job, i) => (
-                                            <div key={i} className="flex items-center justify-between p-3 sm:p-4 bg-slate-50 rounded-xl sm:rounded-2xl border border-slate-100 group/item hover:bg-white transition-all">
+                                            <div key={i} className="flex items-center justify-between p-3 sm:p-4 bg-slate-800/50 rounded-xl sm:rounded-2xl border border-slate-700/50 group/item hover:bg-slate-800 transition-all">
                                                 <div className="flex items-center gap-2 sm:gap-3">
-                                                    <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white border border-slate-100 flex items-center justify-center p-1.5`}>
+                                                    <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center p-1.5`}>
                                                         <img 
                                                             src={`https://logo.clearbit.com/${job.co.toLowerCase()}.com`} 
                                                             className="w-full h-full object-contain grayscale group-hover/item:grayscale-0 transition-all" 
                                                             referrerPolicy="no-referrer"
                                                             onError={(e) => {
-                                                                (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(job.co)}&background=f8fafc&color=64748b&bold=true`;
+                                                                (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(job.co)}&background=0f172a&color=94a3b8&bold=true`;
                                                             }}
                                                         />
                                                     </div>
                                                     <div>
-                                                        <p className="text-[10px] sm:text-xs font-black text-slate-900">{job.co}</p>
+                                                        <p className="text-[10px] sm:text-xs font-black text-white">{job.co}</p>
                                                         <p className="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase">{job.role}</p>
                                                     </div>
                                                 </div>
                                                 <div className={`px-2 py-0.5 sm:py-1 rounded-md sm:rounded-lg text-[7px] sm:text-[8px] font-black uppercase border ${
-                                                    job.color === 'emerald' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-teal-50 text-teal-600 border-teal-100'
+                                                    job.color === 'emerald' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                                                 }`}>
                                                     {job.status}
                                                 </div>
@@ -157,24 +160,65 @@ const Hero3D = () => {
 
                             {activeTab === 'intelligence' && (
                                 <motion.div key="intel" {...tabVariants} transition={{ duration: 0.5 }} className="h-full flex flex-col">
-                                    <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tighter mb-1">Market IQ</h3>
-                                    <p className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest mb-6 sm:mb-8 text-center sm:text-left">Benchmarking</p>
+                                    <div className="flex justify-between items-start mb-6 sm:mb-8">
+                                        <div>
+                                            <h3 className="text-xl sm:text-2xl font-black text-white tracking-tighter mb-1">Market IQ</h3>
+                                            <p className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest">Benchmarking</p>
+                                        </div>
+                                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+                                            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                                        </div>
+                                    </div>
                                     
-                                    <div className="flex-1 flex flex-col items-center justify-center gap-6 sm:gap-8">
-                                        <div className="relative w-32 h-32 sm:w-40 sm:h-40">
-                                            <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                                                <circle cx="50" cy="50" r="45" fill="none" stroke="#f1f5f9" strokeWidth="8" />
-                                                <motion.circle cx="50" cy="50" r="45" fill="none" stroke="#10b981" strokeWidth="8" strokeLinecap="round" strokeDasharray="282.7" initial={{ strokeDashoffset: 282.7 }} animate={{ strokeDashoffset: 282.7 * 0.2 }} transition={{ duration: 1.5, delay: 0.2 }} />
+                                    <div className="flex-1 flex flex-col items-center justify-center gap-6 sm:gap-8 relative">
+                                        {/* Subtle background grid */}
+                                        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9IiMzMzQxNTUiLz48L3N2Zz4=')] [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)] opacity-30 pointer-events-none" />
+                                        
+                                        <div className="relative w-36 h-36 sm:w-48 sm:h-48 flex items-center justify-center">
+                                            <div className="absolute inset-0 rounded-full shadow-[inset_0_0_20px_rgba(0,0,0,0.2)] border border-slate-700/50" />
+                                            <svg className="w-full h-full -rotate-90 drop-shadow-xl" viewBox="0 0 100 100">
+                                                <defs>
+                                                    <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                        <stop offset="0%" stopColor="#34d399" />
+                                                        <stop offset="100%" stopColor="#059669" />
+                                                    </linearGradient>
+                                                    <filter id="glow">
+                                                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                                                        <feMerge>
+                                                            <feMergeNode in="coloredBlur"/>
+                                                            <feMergeNode in="SourceGraphic"/>
+                                                        </feMerge>
+                                                    </filter>
+                                                </defs>
+                                                <circle cx="50" cy="50" r="42" fill="none" stroke="#1e293b" strokeWidth="8" />
+                                                <motion.circle 
+                                                    cx="50" cy="50" r="42" 
+                                                    fill="none" 
+                                                    stroke="url(#progressGradient)" 
+                                                    strokeWidth="8" 
+                                                    strokeLinecap="round" 
+                                                    strokeDasharray="263.89" 
+                                                    initial={{ strokeDashoffset: 263.89 }} 
+                                                    animate={{ strokeDashoffset: 263.89 * 0.15 }} 
+                                                    transition={{ duration: 2, ease: "easeOut", delay: 0.2 }} 
+                                                    filter="url(#glow)"
+                                                />
                                             </svg>
-                                            <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                                <span className="text-lg sm:text-2xl font-black text-slate-900">$215k</span>
-                                                <span className="text-[7px] sm:text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Avg. Salary</span>
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/50 backdrop-blur-sm rounded-full m-4 shadow-sm border border-white/10">
+                                                <span className="text-2xl sm:text-4xl font-black text-white tracking-tighter">$215k</span>
+                                                <span className="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Avg. Salary</span>
                                             </div>
                                         </div>
-                                        <div className="w-full grid grid-cols-2 gap-2 sm:gap-3">
-                                            {['AI Strategy', 'Product Growth', 'Systems', 'Led Teams'].map(skill => (
-                                                <div key={skill} className="px-2 sm:px-3 py-2 bg-slate-50 border border-slate-100 rounded-lg sm:rounded-xl text-[8px] sm:text-[9px] font-black text-slate-500 text-center uppercase tracking-tighter hover:text-emerald-600 transition-colors">
-                                                    {skill}
+                                        <div className="w-full grid grid-cols-2 gap-2 sm:gap-3 relative z-10">
+                                            {[
+                                                { name: 'AI Strategy', icon: '🧠' },
+                                                { name: 'Product Growth', icon: '📈' },
+                                                { name: 'Systems', icon: '⚙️' },
+                                                { name: 'Led Teams', icon: '👥' }
+                                            ].map(skill => (
+                                                <div key={skill.name} className="flex items-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 bg-slate-800/80 border border-slate-700 rounded-xl sm:rounded-2xl shadow-sm hover:shadow-md hover:border-emerald-500/50 transition-all group cursor-default">
+                                                    <span className="text-xs sm:text-sm grayscale group-hover:grayscale-0 transition-all">{skill.icon}</span>
+                                                    <span className="text-[9px] sm:text-[10px] font-bold text-slate-300 uppercase tracking-tight group-hover:text-emerald-400 transition-colors">{skill.name}</span>
                                                 </div>
                                             ))}
                                         </div>
@@ -184,9 +228,10 @@ const Hero3D = () => {
                         </AnimatePresence>
                     </div>
 
-                    <div className="pt-6 sm:pt-8 border-t border-slate-100">
-                        <button className="w-full py-3 sm:py-4 bg-slate-900 text-white rounded-xl sm:rounded-2xl font-black text-[8px] sm:text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-slate-900/20 active:scale-95 transition-all">
-                            Enter Command Center
+                    <div className="pt-6 sm:pt-8 border-t border-slate-100/50 mt-auto relative z-10">
+                        <button className="w-full py-3 sm:py-4 bg-gradient-to-b from-slate-800 to-slate-950 text-white rounded-xl sm:rounded-2xl font-black text-[9px] sm:text-[11px] uppercase tracking-[0.2em] shadow-[0_10px_20px_-10px_rgba(15,23,42,0.5),inset_0_1px_0_rgba(255,255,255,0.1)] hover:shadow-[0_15px_25px_-10px_rgba(15,23,42,0.6),inset_0_1px_0_rgba(255,255,255,0.2)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 group">
+                            <span>Enter Command Center</span>
+                            <svg className="w-3 h-3 sm:w-4 sm:h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                         </button>
                     </div>
                 </GlassCard>
@@ -196,11 +241,11 @@ const Hero3D = () => {
                     style={{ translateZ: 120, x: useTransform(x, v => v * (isMobile ? 50 : 150)), y: useTransform(y, v => v * (isMobile ? 50 : 150)) }}
                     className="absolute -right-10 sm:-right-20 top-1/4 sm:top-1/3"
                 >
-                    <div className="px-4 py-3 sm:px-6 sm:py-4 bg-white shadow-2xl rounded-xl sm:rounded-2xl border border-slate-100 flex items-center gap-2 sm:gap-4">
-                        <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white">
+                    <div className="px-4 py-3 sm:px-6 sm:py-4 bg-slate-900/90 backdrop-blur-2xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.1)] rounded-xl sm:rounded-2xl border border-white/10 flex items-center gap-2 sm:gap-4">
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white shadow-inner">
                             <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                         </div>
-                        <span className="text-[9px] sm:text-xs font-black text-slate-900 tracking-tight whitespace-nowrap">ATS-Verified</span>
+                        <span className="text-[9px] sm:text-xs font-black text-white tracking-tight whitespace-nowrap">ATS-Verified</span>
                     </div>
                 </motion.div>
             </motion.div>

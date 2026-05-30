@@ -24,16 +24,16 @@ const AICompactor: React.FC<AICompactorProps> = ({ onCompact }) => {
     };
 
     return (
-        <div className="bg-gradient-to-br from-indigo-50 to-violet-50 rounded-xl border border-indigo-100 p-4">
+        <div className="bg-gradient-to-br from-emerald-50 to-emerald-50 rounded-xl border border-emerald-100 p-4">
             <div className="flex items-start gap-3 mb-3">
-                <div className="p-2 bg-white rounded-lg shadow-sm text-indigo-600">
+                <div className="p-2 bg-white rounded-lg shadow-sm text-emerald-600">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                 </div>
                 <div>
-                    <h4 className="text-sm font-bold text-indigo-900">One-Page Optimizer</h4>
-                    <p className="text-xs text-indigo-700/80 leading-snug mt-0.5">
+                    <h4 className="text-sm font-bold text-emerald-900">One-Page Optimizer</h4>
+                    <p className="text-xs text-emerald-700/80 leading-snug mt-0.5">
                         Automatically condense your resume to fit perfectly on a single page without losing impact.
                     </p>
                 </div>
@@ -44,7 +44,7 @@ const AICompactor: React.FC<AICompactorProps> = ({ onCompact }) => {
                 onClick={handleCompactClick}
                 disabled={isLoading}
                 whileTap={{ scale: 0.98 }}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold rounded-lg text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
             >
                 {isLoading ? (
                     <>

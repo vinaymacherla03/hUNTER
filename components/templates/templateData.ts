@@ -1,30 +1,16 @@
 
 import React from 'react';
 import { TemplateKey, Customization } from '../../types';
-import SidebarModern from './SidebarModern';
-import MinimalistClean from './MinimalistClean';
-import ElegantSerif from './ElegantSerif';
-import TechFocused from './TechFocused';
-import BoldImpact from './BoldImpact';
-import GoogleStyle from './GoogleStyle';
-import CanvaInspired from './CanvaInspired';
-import GridProfessional from './GridProfessional';
-import TimelineModern from './TimelineModern';
-import FunctionalSkillsPro from './FunctionalSkillsPro';
-import ModernSidebarRight from './ModernSidebarRight';
-import CreativeGradient from './CreativeGradient';
-import ExecutivePremium from './ExecutivePremium';
 import AtsStandard from './AtsStandard';
 import AtsExecutive from './AtsExecutive';
 import AtsMinimalist from './AtsMinimalist';
-import EnhancvModern from './EnhancvModern';
-import EnhancvProfessional from './EnhancvProfessional';
-import EnhancvCreative from './EnhancvCreative';
-import EnhancvMinimal from './EnhancvMinimal';
-import EnhancvClassic from './EnhancvClassic';
-import FlowModern from './FlowModern';
-import FlowSidebar from './FlowSidebar';
-import FlowMinimal from './FlowMinimal';
+import AtsFinance from './AtsFinance';
+import AtsTech from './AtsTech';
+import AtsHealthcare from './AtsHealthcare';
+import AtsFederal from './AtsFederal';
+import AtsSales from './AtsSales';
+import AtsProduct from './AtsProduct';
+import AtsOperations from './AtsOperations';
 
 export interface TemplateInfo {
     key: TemplateKey;
@@ -61,171 +47,59 @@ export const templates: TemplateInfo[] = [
         customization: { font: 'times-new-roman', margin: 'normal' }
     },
     {
-        key: 'minimalist-clean',
-        name: 'Minimalist Clean',
-        description: 'Ultra-clean design with bold accents and plenty of whitespace.',
-        component: MinimalistClean,
-        categories: ['Minimalist', 'Modern'],
-        customization: { font: 'times-new-roman', color: 'slate' }
+        key: 'finance-ats',
+        name: 'Finance ATS',
+        description: 'Industry-standard layout for Finance/Banking. Highly dense, classic serif typography.',
+        component: AtsFinance,
+        categories: ['True ATS', 'Finance', 'Professional'],
+        customization: { font: 'times-new-roman', margin: 'compact', sectionTitleBorderStyle: 'underline' }
     },
     {
-        key: 'sidebar-modern',
-        name: 'Sidebar Modern',
-        description: 'A stylish two-column layout with a dark sidebar for contact and skills.',
-        component: SidebarModern,
-        categories: ['Modern', 'Creative'],
-        customization: { font: 'montserrat', color: 'slate' }
+        key: 'tech-ats',
+        name: 'Tech & Engineering ATS',
+        description: 'Optimized for parsing technologies and hard skills. Clean sans-serif layout.',
+        component: AtsTech,
+        categories: ['True ATS', 'Tech', 'Engineering'],
+        customization: { font: 'arial', margin: 'normal', sectionTitleBorderStyle: 'none' }
     },
     {
-        key: 'elegant-serif',
-        name: 'Elegant Serif',
-        description: 'Sophisticated design using classic serif fonts for a premium look.',
-        component: ElegantSerif,
-        categories: ['Professional', 'Classic'],
-        customization: { font: 'lora', color: 'slate' }
+        key: 'healthcare-ats',
+        name: 'Healthcare ATS',
+        description: 'Traditional and extremely clean, ensuring all certifications and clinical hours are parsed reliably.',
+        component: AtsHealthcare,
+        categories: ['True ATS', 'Healthcare', 'Medical'],
+        customization: { font: 'calibri', margin: 'normal', sectionTitleBorderStyle: 'overline' }
     },
     {
-        key: 'tech-focused',
-        name: 'Tech Focused',
-        description: 'A developer-centric theme with monospace accents and a dark mode aesthetic.',
-        component: TechFocused,
-        categories: ['Modern', 'Tech'],
-        customization: { font: 'jetbrains-mono', color: 'emerald' }
+        key: 'federal-ats',
+        name: 'Federal Resume ATS',
+        description: 'Detailed, highly-structured layout required for USAJOBS and federal applications.',
+        component: AtsFederal,
+        categories: ['True ATS', 'Federal', 'Government'],
+        customization: { font: 'arial', margin: 'normal', sectionTitleBorderStyle: 'full' }
     },
     {
-        key: 'bold-impact',
-        name: 'Bold Impact',
-        description: 'Strong headers and high contrast for a resume that stands out.',
-        component: BoldImpact,
-        categories: ['Modern', 'Creative'],
-        customization: { font: 'montserrat', color: 'slate' }
+        key: 'sales-ats',
+        name: 'Sales & Marketing ATS',
+        description: 'Metrics-focused readable layout designed to highlight KPIs and achievements.',
+        component: AtsSales,
+        categories: ['True ATS', 'Sales', 'Marketing'],
+        customization: { font: 'roboto', margin: 'normal', sectionTitleBorderStyle: 'none' }
     },
     {
-        key: 'google-style',
-        name: 'Google Style',
-        description: 'Inspired by the clean, functional design of Google resume templates.',
-        component: GoogleStyle,
-        categories: ['ATS Friendly', 'Professional'],
-        customization: { font: 'times-new-roman', color: 'slate' }
+        key: 'product-ats',
+        name: 'Product & Design ATS',
+        description: 'A modern, ATS-friendly single column using clean geometric fonts without breaking parsers.',
+        component: AtsProduct,
+        categories: ['True ATS', 'Product Manager', 'Design'],
+        customization: { font: 'inter', margin: 'spacious', sectionTitleBorderStyle: 'none' }
     },
     {
-        key: 'canva-inspired',
-        name: 'Canva Inspired',
-        description: 'Modern, vibrant design with a focus on visual hierarchy and style.',
-        component: CanvaInspired,
-        categories: ['Creative', 'Modern'],
-        customization: { font: 'poppins', color: 'rose' }
-    },
-    {
-        key: 'grid-professional',
-        name: 'Grid Professional',
-        description: 'A structured grid-based layout for a balanced and organized look.',
-        component: GridProfessional,
-        categories: ['Professional', 'Modern'],
-        customization: { font: 'jakarta', color: 'slate' }
-    },
-    {
-        key: 'timeline-modern',
-        name: 'Timeline Modern',
-        description: 'Visualizes your career path with a clean, vertical timeline.',
-        component: TimelineModern,
-        categories: ['Modern', 'Creative'],
-        customization: { font: 'times-new-roman', color: 'slate' }
-    },
-    {
-        key: 'functional-skills',
-        name: 'Functional Skills',
-        description: 'Prioritizes skills and competencies over chronological experience.',
-        component: FunctionalSkillsPro,
-        categories: ['Modern', 'Professional'],
-        customization: { font: 'times-new-roman', color: 'slate' }
-    },
-    {
-        key: 'sidebar-right',
-        name: 'Modern Sidebar Right',
-        description: 'A variant of the sidebar layout with the sidebar on the right.',
-        component: ModernSidebarRight,
-        categories: ['Modern', 'Creative'],
-        customization: { font: 'montserrat', color: 'slate' }
-    },
-    {
-        key: 'creative-gradient',
-        name: 'Creative Gradient',
-        description: 'A vibrant, energetic design with colorful gradients.',
-        component: CreativeGradient,
-        categories: ['Creative', 'Modern'],
-        customization: { font: 'poppins', color: 'rose' }
-    },
-    {
-        key: 'executive-premium',
-        name: 'Executive Premium',
-        description: 'A high-end, sophisticated design for senior leadership roles.',
-        component: ExecutivePremium,
-        categories: ['Professional', 'Modern'],
-        customization: { font: 'lora', color: 'slate' }
-    },
-    {
-        key: 'enhancv-modern',
-        name: 'Enhancv Modern',
-        description: 'A high-density, two-column layout inspired by Enhancv for maximum impact.',
-        component: EnhancvModern,
-        categories: ['Modern', 'Creative', 'Enhancv'],
-        customization: { font: 'inter', color: 'blue' }
-    },
-    {
-        key: 'enhancv-professional',
-        name: 'Enhancv Professional',
-        description: 'A bold, single-column professional layout with strong visual hierarchy.',
-        component: EnhancvProfessional,
-        categories: ['Professional', 'ATS Friendly', 'Enhancv'],
-        customization: { font: 'inter', color: 'blue' }
-    },
-    {
-        key: 'enhancv-creative',
-        name: 'Enhancv Creative',
-        description: 'A dynamic, colorful design with a right-hand sidebar for a unique look.',
-        component: EnhancvCreative,
-        categories: ['Creative', 'Modern', 'Enhancv'],
-        customization: { font: 'poppins', color: 'rose' }
-    },
-    {
-        key: 'enhancv-minimal',
-        name: 'Enhancv Minimal',
-        description: 'A clean, high-density minimalist layout with subtle accents.',
-        component: EnhancvMinimal,
-        categories: ['Minimalist', 'Modern', 'Enhancv'],
-        customization: { font: 'inter', color: 'blue' }
-    },
-    {
-        key: 'enhancv-classic',
-        name: 'Enhancv Classic',
-        description: 'A traditional layout with bold Enhancv-style typography and section dots.',
-        component: EnhancvClassic,
-        categories: ['Professional', 'Classic', 'Enhancv'],
-        customization: { font: 'inter', color: 'slate' }
-    },
-    {
-        key: 'flow-modern',
-        name: 'Flow Modern',
-        description: 'A clean, modern layout inspired by FlowCV with a centered header and balanced whitespace.',
-        component: FlowModern,
-        categories: ['Modern', 'Professional', 'FlowCV'],
-        customization: { font: 'inter', color: 'blue' }
-    },
-    {
-        key: 'flow-sidebar',
-        name: 'Flow Sidebar',
-        description: 'A classic two-column design with a distinct sidebar for contact details and skills.',
-        component: FlowSidebar,
-        categories: ['Modern', 'Creative', 'FlowCV'],
-        customization: { font: 'inter', color: 'blue' }
-    },
-    {
-        key: 'flow-minimal',
-        name: 'Flow Minimal',
-        description: 'An ultra-minimalist, high-density layout for a sleek and professional look.',
-        component: FlowMinimal,
-        categories: ['Minimalist', 'Modern', 'FlowCV'],
-        customization: { font: 'inter', color: 'slate' }
+        key: 'operations-ats',
+        name: 'Operations & Supply Chain',
+        description: 'Crisp layout optimizing readability for strict supply chain and project management systems.',
+        component: AtsOperations,
+        categories: ['True ATS', 'Operations', 'Supply Chain'],
+        customization: { font: 'georgia', margin: 'normal', sectionTitleBorderStyle: 'underline' }
     }
 ];

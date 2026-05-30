@@ -2,9 +2,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { InterviewQuestion, InterviewFeedback } from '../../types';
-import { evaluateInterviewAnswer } from '../../services/geminiService';
+import { evaluateInterviewAnswer, fetchRedditInterviewTips } from '../../services/geminiService';
 import SparkleIcon from '../icons/SparkleIcon';
 import { Play, RotateCcw, CheckCircle2, AlertCircle, Lightbulb, MessageSquare, ChevronRight, ChevronDown } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface InterviewPrepContentProps {
     questions: InterviewQuestion[];
@@ -20,8 +21,28 @@ const InterviewPrepContent: React.FC<InterviewPrepContentProps> = ({ questions, 
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [feedback, setFeedback] = useState<InterviewFeedback | null>(null);
     const [showTip, setShowTip] = useState(false);
+    const [redditTips, setRedditTips] = useState<string[]>([]);
+    const [isLoadingReddit, setIsLoadingReddit] = useState(false);
 
     const currentQuestion = questions[activeIndex];
+
+    const handleFetchRedditTips = async () => {
+        setIsLoadingReddit(true);
+        try {
+            const tips = await fetchRedditInterviewTips(role);
+            setRedditTips(tips);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setIsLoadingReddit(false);
+        }
+    };
+
+    React.useEffect(() => {
+        if (questions.length > 0 && redditTips.length === 0) {
+            handleFetchRedditTips();
+        }
+    }, [questions, role]);
 
     const handleAnalyze = async () => {
         if (!userAnswer.trim()) return;
@@ -32,7 +53,7 @@ const InterviewPrepContent: React.FC<InterviewPrepContentProps> = ({ questions, 
             setIsEvaluated(true);
         } catch (e) {
             console.error(e);
-            alert("Failed to analyze answer. Please try again.");
+            toast.error("Failed to analyze answer. Please try again.");
         } finally {
             setIsAnalyzing(false);
         }
@@ -111,7 +132,7 @@ const InterviewPrepContent: React.FC<InterviewPrepContentProps> = ({ questions, 
             </div>
 
             <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-teal-500" />
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-emerald-500" />
                 
                 <div className="mb-8">
                     <div className="flex items-center gap-3 mb-4">
@@ -249,13 +270,28 @@ const InterviewPrepContent: React.FC<InterviewPrepContentProps> = ({ questions, 
                             </div>
                         </div>
 
-                        <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-6 sm:p-8 rounded-3xl border border-emerald-100/50 shadow-sm relative overflow-hidden">
+                        <div className="bg-gradient-to-br from-emerald-50 to-emerald-50 p-6 sm:p-8 rounded-3xl border border-emerald-100/50 shadow-sm relative overflow-hidden">
                             <SparkleIcon className="absolute top-4 right-4 w-24 h-24 text-emerald-500/5" />
                             <h4 className="text-xs font-black text-emerald-600 uppercase tracking-widest mb-4 flex items-center gap-2 relative z-10">
                                 <SparkleIcon className="w-4 h-4" /> Refined Answer Example
                             </h4>
                             <p className="text-base text-emerald-950 leading-relaxed font-medium relative z-10">"{feedback.refinedAnswer}"</p>
                         </div>
+
+                        {redditTips.length > 0 && (
+                            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm">
+                                <h4 className="text-xs font-black text-slate-900 uppercase tracking-widest mb-6 flex items-center gap-2">
+                                    <MessageSquare className="w-4 h-4 text-orange-500" /> Reddit Career Advice for {role}
+                                </h4>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {redditTips.map((tip, i) => (
+                                        <div key={i} className="p-4 bg-orange-50/30 border border-orange-100 rounded-2xl text-sm text-slate-700 font-medium leading-relaxed">
+                                            {tip}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </motion.div>
                 )}
             </AnimatePresence>

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Joyride, Step, EventData, STATUS } from 'react-joyride';
 
+
 interface OnboardingTourProps {
   run: boolean;
   onFinish: () => void;
@@ -38,11 +39,29 @@ const OnboardingTour: React.FC<OnboardingTourProps> = ({ run, onFinish }) => {
       ),
     },
     {
+      target: '#tour-ai-rewrite',
+      content: (
+        <div className="text-left">
+          <h3 className="text-md font-bold mb-1">AI Smart Rewrite</h3>
+          <p>Click the sparkle icon on any bullet point to have our AI rewrite it for maximum impact or to make it more concise.</p>
+        </div>
+      ),
+    },
+    {
       target: '#tour-style-tab',
       content: (
         <div className="text-left">
           <h3 className="text-md font-bold mb-1">Design & Style</h3>
           <p>Customize fonts, colors, and layouts to make your resume stand out.</p>
+        </div>
+      ),
+    },
+    {
+      target: '#tour-fit-one-page',
+      content: (
+        <div className="text-left">
+          <h3 className="text-md font-bold mb-1">Auto Fit to One Page</h3>
+          <p>Tired of your resume spilling over to a second page? Enable this to automatically scale your content to fit perfectly on a single page.</p>
         </div>
       ),
     },
@@ -65,7 +84,7 @@ const OnboardingTour: React.FC<OnboardingTourProps> = ({ run, onFinish }) => {
       ),
     },
     {
-      target: '#tour-hub-tab',
+      target: '#tour-hub-mode-btn',
       content: (
         <div className="text-left">
           <h3 className="text-md font-bold mb-1">Career Intelligence Hub</h3>
@@ -83,11 +102,47 @@ const OnboardingTour: React.FC<OnboardingTourProps> = ({ run, onFinish }) => {
       ),
     },
     {
+      target: '#tour-template-btn',
+      content: (
+        <div className="text-left">
+          <h3 className="text-md font-bold mb-1">Template Gallery</h3>
+          <p>Browse and select from our collection of professional, creative, and ATS-optimized templates.</p>
+        </div>
+      ),
+    },
+    {
+      target: '#tour-version-btn',
+      content: (
+        <div className="text-left">
+          <h3 className="text-md font-bold mb-1">Version History</h3>
+          <p>Never lose your progress. Save and restore different versions of your resume for different job applications.</p>
+        </div>
+      ),
+    },
+    {
+      target: '#tour-download-btn',
+      content: (
+        <div className="text-left">
+          <h3 className="text-md font-bold mb-1">Export & Download</h3>
+          <p>Once you're happy with your resume, export it as a PDF, Word document, or ATS-optimized text file.</p>
+        </div>
+      ),
+    },
+    {
+      target: '#tour-ai-agent-btn',
+      content: (
+        <div className="text-left">
+          <h3 className="text-md font-bold mb-1">AI Career Agent</h3>
+          <p>Need help or have questions? Our AI agent is available via voice or chat to guide you through your career journey.</p>
+        </div>
+      ),
+    },
+    {
       target: 'body',
       content: (
         <div className="text-left">
           <h3 className="text-lg font-bold mb-2">You're all set! 🎯</h3>
-          <p>Start building your dream career today. If you need help, our AI agent is always here for you.</p>
+          <p>Start building your dream career today. If you need help, you can restart this tour anytime using the help button in the header.</p>
         </div>
       ),
       placement: 'center',

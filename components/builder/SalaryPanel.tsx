@@ -1,8 +1,9 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { DollarSign, Search, TrendingUp, MessageSquare, Info, RefreshCw, MapPin, Briefcase, Award, Loader2 } from 'lucide-react';
+import { DollarSign, Search, TrendingUp, MessageSquare, Info, RefreshCw, MapPin, Briefcase, Award, Loader2, Coins } from 'lucide-react';
 import { getSalaryIntelligence } from '../../services/geminiService';
+import AIProcessingState from './AIProcessingState';
 
 interface SalaryPanelProps {
     defaultRole: string;
@@ -32,14 +33,14 @@ const SalaryPanel: React.FC<SalaryPanelProps> = ({ defaultRole }) => {
     };
 
     return (
-        <div className="space-y-8">
-            <div className="flex flex-col gap-2">
+        <div className="space-y-6 sm:space-y-8">
+            <div className="flex flex-col gap-2 px-2">
                 <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Salary Intelligence</h2>
-                <p className="text-xs sm:text-sm text-slate-500 font-medium italic">Real-time salary data and negotiation scripts powered by Google Search.</p>
+                <p className="text-[10px] sm:text-sm text-slate-500 font-medium italic">Real-time salary data and negotiation scripts powered by Google Search.</p>
             </div>
 
-            <div className="bg-white rounded-[2.5rem] border-2 border-slate-100 p-8 shadow-sm">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] border-2 border-slate-100 p-4 sm:p-8 shadow-sm">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 mb-8">
                     <div className="relative">
                         <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                         <input 
@@ -47,7 +48,7 @@ const SalaryPanel: React.FC<SalaryPanelProps> = ({ defaultRole }) => {
                             value={role}
                             onChange={(e) => setRole(e.target.value)}
                             placeholder="Role (e.g. Senior Dev)"
-                            className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl text-sm font-bold transition-all outline-none"
+                            className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-xl sm:rounded-2xl text-sm font-bold transition-all outline-none"
                         />
                     </div>
                     <div className="relative">
@@ -57,7 +58,7 @@ const SalaryPanel: React.FC<SalaryPanelProps> = ({ defaultRole }) => {
                             value={location}
                             onChange={(e) => setLocation(e.target.value)}
                             placeholder="Location (e.g. SF, Remote)"
-                            className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl text-sm font-bold transition-all outline-none"
+                            className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-xl sm:rounded-2xl text-sm font-bold transition-all outline-none"
                         />
                     </div>
                     <div className="relative">
@@ -65,7 +66,7 @@ const SalaryPanel: React.FC<SalaryPanelProps> = ({ defaultRole }) => {
                         <select 
                             value={experience}
                             onChange={(e) => setExperience(e.target.value)}
-                            className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl text-sm font-bold transition-all outline-none appearance-none"
+                            className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-xl sm:rounded-2xl text-sm font-bold transition-all outline-none appearance-none"
                         >
                             <option>Junior</option>
                             <option>Mid-Level</option>
@@ -87,19 +88,19 @@ const SalaryPanel: React.FC<SalaryPanelProps> = ({ defaultRole }) => {
 
                 <AnimatePresence mode="wait">
                     {isLoading ? (
-                        <motion.div 
+                        <AIProcessingState 
                             key="loading"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="py-20 flex flex-col items-center justify-center text-center"
-                        >
-                            <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mb-6 animate-pulse">
-                                <DollarSign className="w-10 h-10 text-emerald-600" />
-                            </div>
-                            <h3 className="text-xl font-black text-slate-900 uppercase tracking-widest mb-2">Calculating Value</h3>
-                            <p className="text-sm text-slate-500 max-w-xs mx-auto font-medium">Scanning current job boards and salary reports for the most accurate data...</p>
-                        </motion.div>
+                            title="Calculating Value"
+                            messages={[
+                                "Scanning current job boards...",
+                                "Analyzing industry reports...",
+                                "Evaluating market trends...",
+                                "Determining optimal salary range...",
+                                "Drafting negotiation strategy..."
+                            ]}
+                            icon={Coins}
+                            color="amber"
+                        />
                     ) : data ? (
                         <motion.div 
                             key="results"
@@ -108,7 +109,7 @@ const SalaryPanel: React.FC<SalaryPanelProps> = ({ defaultRole }) => {
                             className="mt-12 space-y-8"
                         >
                             {/* Salary Range Card */}
-                            <div className="p-10 bg-gradient-to-br from-emerald-600 to-teal-700 rounded-[2.5rem] text-white shadow-2xl shadow-emerald-200 relative overflow-hidden">
+                            <div className="p-10 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-[2.5rem] text-white shadow-2xl shadow-emerald-200 relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
                                 <div className="relative z-10 flex flex-col items-center text-center">
                                     <span className="text-xs font-black uppercase tracking-[0.3em] text-emerald-200 mb-4">Estimated Market Range</span>
@@ -137,7 +138,7 @@ const SalaryPanel: React.FC<SalaryPanelProps> = ({ defaultRole }) => {
                                             <h4 className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-4">Key Leverage Factors:</h4>
                                             <div className="space-y-2">
                                                 {data.factors.map((factor, i) => (
-                                                    <div key={i} className="flex items-center gap-3 text-xs font-bold text-emerald-800">
+                                                    <div key={`factor-${i}-${factor}`} className="flex items-center gap-3 text-xs font-bold text-emerald-800">
                                                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
                                                         {factor}
                                                     </div>
@@ -150,14 +151,14 @@ const SalaryPanel: React.FC<SalaryPanelProps> = ({ defaultRole }) => {
                                 {/* Negotiation Script */}
                                 <div className="space-y-6">
                                     <div className="flex items-center gap-3">
-                                        <MessageSquare className="w-6 h-6 text-teal-600" />
+                                        <MessageSquare className="w-6 h-6 text-emerald-600" />
                                         <h3 className="text-lg font-black text-slate-900 uppercase tracking-widest">The Script</h3>
                                     </div>
                                     <div className="p-8 bg-slate-900 rounded-[2rem] text-white relative overflow-hidden group">
                                         <div className="absolute top-0 right-0 p-6 opacity-20 group-hover:opacity-40 transition-opacity">
                                             <MessageSquare className="w-12 h-12" />
                                         </div>
-                                        <p className="text-xs font-black text-teal-400 uppercase tracking-widest mb-4">What to say:</p>
+                                        <p className="text-xs font-black text-emerald-400 uppercase tracking-widest mb-4">What to say:</p>
                                         <p className="text-lg font-medium leading-relaxed italic text-slate-200">
                                             "{data.script}"
                                         </p>

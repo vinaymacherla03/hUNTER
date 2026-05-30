@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ResumeData } from '../../types';
+import { ensureAbsoluteUrl } from '../../utils/url';
 import { findMatchingJobs } from '../../services/geminiService';
+import { Search, MapPin, Briefcase, GraduationCap } from 'lucide-react';
+import AIProcessingState from './AIProcessingState';
 
 interface InternshipFinderPanelProps {
     resumeData: ResumeData;
@@ -41,21 +44,31 @@ const InternshipFinderPanel: React.FC<InternshipFinderPanelProps> = ({ resumeDat
                 </div>
             </div>
 
-            {jobs.length > 0 && (
-                <div className="space-y-4">
-                    {jobs.map((job, index) => (
-                        <div key={index} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-center">
-                            <div>
-                                <h4 className="font-bold text-slate-900">{job.role}</h4>
-                                <p className="text-sm text-slate-600">{job.company} • {job.location}</p>
+            <AnimatePresence mode="wait">
+                {loading ? (
+                    <AIProcessingState 
+                        key="loading"
+                        title="Finding Internships"
+                        description="Scanning job boards and company career pages for internships that match your profile and location preferences..."
+                        icon={GraduationCap}
+                        color="blue"
+                    />
+                ) : jobs.length > 0 ? (
+                    <div className="space-y-4">
+                        {jobs.map((job, index) => (
+                            <div key={`${job.id}-${index}`} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-center">
+                                <div>
+                                    <h4 className="font-bold text-slate-900">{job.role}</h4>
+                                    <p className="text-sm text-slate-600">{job.company} • {job.location}</p>
+                                </div>
+                                <a href={ensureAbsoluteUrl(job.link)} target="_blank" rel="noopener noreferrer" className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-bold">
+                                    Apply
+                                </a>
                             </div>
-                            <a href={job.link} target="_blank" rel="noopener noreferrer" className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-bold">
-                                Apply
-                            </a>
-                        </div>
-                    ))}
-                </div>
-            )}
+                        ))}
+                    </div>
+                ) : null}
+            </AnimatePresence>
         </div>
     );
 };

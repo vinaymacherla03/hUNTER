@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Markdown from 'react-markdown';
 import { Search, Building, Newspaper, Rocket, Target, Loader2, Globe, ExternalLink } from 'lucide-react';
 import { researchCompany } from '../../services/geminiService';
 
@@ -8,6 +9,7 @@ const CompanyResearchPanel: React.FC = () => {
     const [companyName, setCompanyName] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [report, setReport] = useState<string | null>(null);
+    const [sources, setSources] = useState<{uri: string, title: string}[]>([]);
     const [error, setError] = useState<string | null>(null);
 
     const handleResearch = async (e: React.FormEvent) => {
@@ -17,10 +19,12 @@ const CompanyResearchPanel: React.FC = () => {
         setIsLoading(true);
         setError(null);
         setReport(null);
+        setSources([]);
 
         try {
             const data = await researchCompany(companyName);
-            setReport(data);
+            setReport(data.text);
+            setSources(data.sources || []);
         } catch (err) {
             setError("Failed to research company. Please try again.");
             console.error(err);
@@ -94,19 +98,30 @@ const CompanyResearchPanel: React.FC = () => {
                                     <h3 className="text-xl font-black text-slate-900 uppercase tracking-widest m-0">Intelligence Report</h3>
                                 </div>
                                 
-                                <div className="whitespace-pre-wrap text-slate-700 leading-relaxed font-medium">
-                                    {report}
+                                <div className="text-slate-700 leading-relaxed font-medium markdown-body">
+                                    <Markdown>{report || ''}</Markdown>
                                 </div>
                             </div>
 
-                            <div className="mt-12 pt-8 border-t border-slate-100 flex items-center justify-between">
+                            <div className="mt-12 pt-8 border-t border-slate-100 flex flex-col gap-4">
                                 <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
                                     <Newspaper className="w-4 h-4" />
-                                    Source: Google Search Real-time
+                                    Sources & Recent News
                                 </div>
-                                <button className="flex items-center gap-2 text-emerald-600 text-xs font-black uppercase tracking-widest hover:gap-3 transition-all">
-                                    Open Official Site <ExternalLink className="w-4 h-4" />
-                                </button>
+                                {sources.length > 0 ? (
+                                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                                        {sources.map((src, i) => (
+                                            <li key={i}>
+                                                <a href={src.uri} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-slate-600 hover:text-emerald-600 font-medium transition-colors truncate">
+                                                    <ExternalLink className="w-4 h-4 shrink-0 opacity-50" />
+                                                    <span className="truncate">{src.title}</span>
+                                                </a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <span className="text-xs text-slate-400 font-medium">Real-time web search was used, but no specific links were returned.</span>
+                                )}
                             </div>
                         </div>
 

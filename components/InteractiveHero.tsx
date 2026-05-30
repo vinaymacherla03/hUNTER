@@ -53,8 +53,8 @@ const Hero: React.FC<HeroProps> = ({ onGetStarted, onEnhance }) => {
         <section className="relative bg-slate-900 pt-32 pb-24 lg:pt-48 lg:pb-40 overflow-hidden">
             {/* Elegant Background Patterns */}
             <div className="absolute inset-0 z-0">
-                <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px]" />
-                <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-violet-600/10 rounded-full blur-[100px]" />
+                <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-emerald-600/10 rounded-full blur-[120px]" />
+                <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-emerald-600/10 rounded-full blur-[100px]" />
                 <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] mix-blend-overlay" />
             </div>
 
@@ -64,11 +64,11 @@ const Hero: React.FC<HeroProps> = ({ onGetStarted, onEnhance }) => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6 }}
-                        className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-widest mb-6"
+                        className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-widest mb-6"
                     >
                         <span className="relative flex h-2 w-2">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                         </span>
                         Exclusive Career Intelligence
                     </motion.div>
@@ -80,7 +80,7 @@ const Hero: React.FC<HeroProps> = ({ onGetStarted, onEnhance }) => {
                         className="text-5xl md:text-7xl font-display font-black text-white leading-[1.1] tracking-tight"
                     >
                         Access the Hidden <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">Job Market.</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-300">Job Market.</span>
                     </motion.h1>
 
                     <motion.p 
@@ -108,7 +108,7 @@ const Hero: React.FC<HeroProps> = ({ onGetStarted, onEnhance }) => {
                                 <input 
                                     type="text" 
                                     placeholder="Search target role (e.g. Director of Engineering)" 
-                                    className="w-full pl-12 pr-4 py-5 bg-white rounded-xl text-slate-900 font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all placeholder:text-slate-400"
+                                    className="w-full pl-12 pr-4 py-5 bg-white rounded-xl text-slate-900 font-bold focus:outline-none focus:ring-4 focus:ring-emerald-500/20 transition-all placeholder:text-slate-400"
                                 />
                             </div>
                             <div className="w-full md:w-48 relative">
@@ -123,7 +123,7 @@ const Hero: React.FC<HeroProps> = ({ onGetStarted, onEnhance }) => {
                             </div>
                             <button 
                                 onClick={onGetStarted}
-                                className="w-full md:w-auto px-10 py-5 bg-blue-600 text-white font-black rounded-xl hover:bg-blue-500 transition-all shadow-xl shadow-blue-600/20 active:scale-95 whitespace-nowrap"
+                                className="w-full md:w-auto px-10 py-5 bg-emerald-600 text-white font-black rounded-xl hover:bg-emerald-500 transition-all shadow-xl shadow-emerald-600/20 active:scale-95 whitespace-nowrap"
                             >
                                 Analyze Market
                             </button>

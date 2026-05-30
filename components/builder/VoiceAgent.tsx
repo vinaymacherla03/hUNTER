@@ -217,7 +217,7 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ isOpen, onClose, currentStepKey
                 return "from-amber-500 to-yellow-500";
             case 'disconnected':
             default:
-                return "from-violet-600 to-pink-600";
+                return "from-emerald-600 to-emerald-600";
         }
     };
     
@@ -227,7 +227,7 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ isOpen, onClose, currentStepKey
     return (
         <motion.button
             onClick={handleMicClick}
-            className={`absolute bottom-6 left-6 w-14 h-14 rounded-full bg-gradient-to-br ${getButtonColor()} text-white shadow-2xl shadow-violet-500/30 flex items-center justify-center z-40`}
+            className={`absolute bottom-6 left-6 w-14 h-14 rounded-full bg-gradient-to-br ${getButtonColor()} text-white shadow-2xl shadow-emerald-500/30 flex items-center justify-center z-40`}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             aria-label="Toggle Voice Agent"

@@ -1,9 +1,10 @@
 import { ResumeData } from '../types';
 
 export const generateResumePlainText = (resumeData: ResumeData): string => {
+    // OpenCATS and other older ATS systems prefer standard headers and clear spacing.
     let text = `${resumeData.fullName}\n`;
     if (resumeData.title) text += `${resumeData.title}\n`;
-    text += `\nCONTACT INFO\n`;
+    text += `\nCONTACT INFORMATION\n`;
     text += `Location: ${resumeData.contactInfo.location}\n`;
     text += `Phone: ${resumeData.contactInfo.phone}\n`;
     text += `Email: ${resumeData.contactInfo.email}\n`;
@@ -12,13 +13,16 @@ export const generateResumePlainText = (resumeData: ResumeData): string => {
     if (resumeData.contactInfo.portfolio) text += `Portfolio: ${resumeData.contactInfo.portfolio}\n`;
     
     if (resumeData.summary) {
-        text += `\nSUMMARY\n${resumeData.summary}\n`;
+        text += `\nPROFESSIONAL SUMMARY\n${resumeData.summary}\n`;
     }
     
     if (resumeData.experience && resumeData.experience.length > 0) {
-        text += `\nEXPERIENCE\n`;
+        text += `\nWORK EXPERIENCE\n`;
         resumeData.experience.forEach(exp => {
-            text += `\n${exp.role} | ${exp.company} | ${exp.location} | ${exp.dates}\n`;
+            text += `\nCompany: ${exp.company}\n`;
+            text += `Title: ${exp.role}\n`;
+            text += `Location: ${exp.location}\n`;
+            text += `Dates: ${exp.dates}\n`;
             exp.description.forEach(desc => {
                 text += `- ${desc}\n`;
             });
@@ -28,7 +32,10 @@ export const generateResumePlainText = (resumeData: ResumeData): string => {
     if (resumeData.education && resumeData.education.length > 0) {
         text += `\nEDUCATION\n`;
         resumeData.education.forEach(edu => {
-            text += `\n${edu.degree} | ${edu.institution} | ${edu.location} | ${edu.graduationDate}\n`;
+            text += `\nDegree: ${edu.degree}\n`;
+            text += `Institution: ${edu.institution}\n`;
+            text += `Location: ${edu.location}\n`;
+            text += `Graduation Date: ${edu.graduationDate}\n`;
         });
     }
     
@@ -42,7 +49,8 @@ export const generateResumePlainText = (resumeData: ResumeData): string => {
     if (resumeData.projects && resumeData.projects.length > 0) {
         text += `\nPROJECTS\n`;
         resumeData.projects.forEach(proj => {
-            text += `\n${proj.name} | ${proj.role}\n`;
+            text += `\nProject Name: ${proj.name}\n`;
+            text += `Role: ${proj.role}\n`;
             proj.description.forEach(desc => {
                 text += `- ${desc}\n`;
             });
@@ -64,7 +72,7 @@ export const generateResumePlainText = (resumeData: ResumeData): string => {
     }
 
     if (resumeData.keywords && resumeData.keywords.length > 0) {
-        text += `\nKEYWORDS\n`;
+        text += `\nADDITIONAL KEYWORDS\n`;
         text += resumeData.keywords.join(', ') + '\n';
     }
     

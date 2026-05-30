@@ -16,6 +16,8 @@ interface FormFieldProps {
   required?: boolean;
   validation?: 'url' | 'email' | 'phone';
   tip?: string;
+  hideLabel?: boolean;
+  compact?: boolean;
 }
 
 const FormField: React.FC<FormFieldProps> = ({
@@ -29,19 +31,21 @@ const FormField: React.FC<FormFieldProps> = ({
   rows = 3,
   required = false,
   validation,
-  tip
+  tip,
+  hideLabel = false,
+  compact = false
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const shouldCheckGrammar = (as === 'textarea' || type === 'text') && !name.includes('name') && !name.includes('email') && !name.includes('link') && !name.includes('date');
   
-  const { isChecking, result, clearParams } = useGrammarCheck(value, shouldCheckGrammar && isFocused);
+  const { isChecking, result, clearParams, checkGrammar } = useGrammarCheck(value, shouldCheckGrammar && isFocused);
 
   const handleBlur = () => {
     setIsFocused(false);
     let validationError: string | null = null;
-    const trimmedValue = value.trim();
+    const trimmedValue = (value || '').trim();
 
     if (required && !trimmedValue) {
         validationError = "This field is required.";
@@ -85,13 +89,18 @@ const FormField: React.FC<FormFieldProps> = ({
     clearParams();
   };
 
-  const isValid = value.trim().length > 0 && !error;
+  const isValid = (value || '').trim().length > 0 && !error;
 
-  const baseClasses = "block w-full text-sm p-3 border rounded-xl shadow-sm outline-none transition-all duration-200 bg-white text-slate-900 placeholder:text-slate-400";
+  const baseClasses = compact 
+    ? "block w-full text-[13px] px-3 py-2.5 border rounded-lg shadow-sm outline-none transition-all duration-200 bg-white text-slate-900 placeholder:text-slate-400 font-medium"
+    : "block w-full text-[14px] px-4 py-3 border rounded-xl shadow-[0_1px_2px_rgba(0,0,0,0.04)] outline-none transition-all duration-200 bg-white text-slate-900 placeholder:text-slate-400 font-medium";
+  
   const stateClasses = error 
-    ? "border-red-400 ring-4 ring-red-50"
+    ? "border-rose-400 ring-2 ring-rose-500/20"
+    : result && result.issues.length > 0
+    ? "border-amber-400 ring-2 ring-amber-500/20"
     : isFocused 
-    ? "border-blue-500 ring-4 ring-blue-50"
+    ? "border-slate-400 ring-4 ring-slate-100 shadow-[0_0_10px_rgba(0,0,0,0.02)]"
     : "border-slate-200 hover:border-slate-300";
 
   const commonProps = {
@@ -104,27 +113,30 @@ const FormField: React.FC<FormFieldProps> = ({
     placeholder,
     required,
     spellCheck: true,
-    className: `${baseClasses} ${stateClasses} ${isValid ? 'pr-10' : ''}`,
+    className: `${baseClasses} ${stateClasses} ${isValid || (result && result.issues.length > 0) ? 'pr-10' : ''}`,
   };
 
   return (
-    <div className="mb-6 group">
-      <div className="flex justify-between items-center mb-2">
-        <label htmlFor={name} className="text-sm font-bold text-slate-900 transition-colors">
-            {label}
-            {required && <span className="text-rose-500 ml-1">*</span>}
-        </label>
-        {tip && !error && (
-            <div className="relative">
-                 <div className="group/tip">
-                    <svg className="w-4 h-4 text-slate-300 cursor-help" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <div className="absolute bottom-full right-0 mb-2 w-48 p-2 bg-slate-800 text-white text-[10px] rounded-lg opacity-0 pointer-events-none group-hover/tip:opacity-100 transition-opacity z-10 shadow-xl">
-                        {tip}
-                    </div>
-                </div>
-            </div>
-        )}
-      </div>
+    <div className={`${compact ? 'mb-3' : 'mb-5'} group`}>
+      {!hideLabel && (
+        <div className="flex justify-between items-center mb-1.5 px-0.5">
+          <label htmlFor={name} className="text-[13px] font-bold text-slate-700 transition-colors">
+              {label}
+              {required && <span className="text-rose-500 ml-1 font-black">*</span>}
+          </label>
+          {tip && !error && (
+              <div className="relative">
+                   <div className="group/tip flex items-center justify-center w-4 h-4 rounded-full bg-slate-100 hover:bg-slate-200 transition-colors cursor-help">
+                      <span className="text-[10px] font-bold text-slate-500">i</span>
+                      <div className="absolute bottom-full right-0 mb-2 w-56 p-2.5 bg-slate-800 text-white text-[11px] font-medium leading-relaxed rounded-xl opacity-0 pointer-events-none group-hover/tip:opacity-100 transition-opacity z-10 shadow-xl">
+                          {tip}
+                          <div className="absolute top-full right-1.5 -mt-1 border-4 border-transparent border-t-slate-800"></div>
+                      </div>
+                  </div>
+              </div>
+          )}
+        </div>
+      )}
       
       <div className="relative">
           {as === 'textarea' ? (
@@ -142,13 +154,15 @@ const FormField: React.FC<FormFieldProps> = ({
           )}
 
           {shouldCheckGrammar && (
-             <GrammarIndicator 
-                isChecking={isChecking} 
-                result={result} 
-                onApply={handleApplyCorrection} 
-                onDismiss={clearParams} 
-                className="top-3 right-3"
-             />
+             <div className="absolute top-3 right-3 flex items-center gap-2">
+                <GrammarIndicator 
+                    isChecking={isChecking} 
+                    isFocused={isFocused}
+                    result={result} 
+                    onApply={handleApplyCorrection} 
+                    onDismiss={clearParams} 
+                />
+             </div>
           )}
       </div>
       

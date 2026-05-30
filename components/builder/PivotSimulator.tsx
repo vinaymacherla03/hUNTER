@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getPivotAnalysis } from '../../services/geminiService';
 import { ResumeData } from '../../types';
-import { Target, Zap, ShieldAlert, RefreshCw, Loader2, Compass, ArrowRight, CheckCircle2 } from 'lucide-react';
+import AIProcessingState from './AIProcessingState';
+import { Target, Zap, ShieldAlert, RefreshCw, Loader2, Compass, ArrowRight, CheckCircle2, ArrowRightLeft } from 'lucide-react';
 
 interface PivotSimulatorProps {
     resumeData: ResumeData;
@@ -86,19 +87,19 @@ const PivotSimulator: React.FC<PivotSimulatorProps> = ({ resumeData }) => {
                 <div className="relative min-h-[500px]">
                     <AnimatePresence mode="wait">
                         {isLoading ? (
-                            <motion.div 
+                            <AIProcessingState 
                                 key="loading"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                className="absolute inset-0 flex flex-col items-center justify-center text-center p-8 bg-slate-50 rounded-[3rem] border-4 border-dashed border-slate-100"
-                            >
-                                <div className="w-24 h-24 bg-emerald-600 rounded-full flex items-center justify-center mb-8 animate-pulse shadow-2xl shadow-emerald-200">
-                                    <Zap className="w-12 h-12 text-white" />
-                                </div>
-                                <h3 className="text-2xl font-black text-slate-900 uppercase tracking-widest mb-2">Calculating Trajectory</h3>
-                                <p className="text-sm text-slate-500 max-w-xs mx-auto font-bold uppercase tracking-widest opacity-50">Mapping transferable skills and identifying gaps...</p>
-                            </motion.div>
+                                title="Calculating Trajectory"
+                                messages={[
+                                    "Analyzing target role requirements...",
+                                    "Mapping your transferable skills...",
+                                    "Identifying critical experience gaps...",
+                                    "Calculating pivot feasibility score...",
+                                    "Formulating transition strategy..."
+                                ]}
+                                icon={ArrowRightLeft}
+                                color="blue"
+                            />
                         ) : pivot ? (
                             <motion.div 
                                 key="results"
@@ -131,7 +132,7 @@ const PivotSimulator: React.FC<PivotSimulatorProps> = ({ resumeData }) => {
                                         </h4>
                                         <div className="flex flex-wrap gap-2">
                                             {pivot.transferableSkills.map((s, i) => (
-                                                <div key={i} className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-xs font-black uppercase tracking-tight border border-emerald-100">
+                                                <div key={`transferable-${i}-${s}`} className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-xs font-black uppercase tracking-tight border border-emerald-100">
                                                     {s}
                                                 </div>
                                             ))}
@@ -146,7 +147,7 @@ const PivotSimulator: React.FC<PivotSimulatorProps> = ({ resumeData }) => {
                                         </h4>
                                         <div className="flex flex-wrap gap-2">
                                             {pivot.gaps.map((g, i) => (
-                                                <div key={i} className="px-4 py-2 bg-rose-50 text-rose-700 rounded-xl text-xs font-black uppercase tracking-tight border border-rose-100">
+                                                <div key={`gap-${i}-${g}`} className="px-4 py-2 bg-rose-50 text-rose-700 rounded-xl text-xs font-black uppercase tracking-tight border border-rose-100">
                                                     {g}
                                                 </div>
                                             ))}

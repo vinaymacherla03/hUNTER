@@ -77,7 +77,7 @@ const AiRewriterShowcase: React.FC = () => {
                                 >
                                     {/* Scanning Overlay */}
                                     <motion.div 
-                                        className="absolute -left-4 -right-4 top-0 h-8 bg-blue-500/10 border-y border-blue-500/30 z-10 backdrop-blur-[1px]"
+                                        className="absolute -left-4 -right-4 top-0 h-8 bg-emerald-500/10 border-y border-emerald-500/30 z-10 backdrop-blur-[1px]"
                                         animate={{ top: ['0%', '100%'] }}
                                         transition={{ duration: 1.5, ease: "linear" }}
                                     />
@@ -115,17 +115,17 @@ const AiRewriterShowcase: React.FC = () => {
                                     animate={{ opacity: 1, scale: 1 }}
                                     className="space-y-4"
                                 >
-                                    <div className="bg-blue-50/50 p-3 -m-3 rounded-lg border border-blue-100 transition-all">
+                                    <div className="bg-emerald-50/50 p-3 -m-3 rounded-lg border border-emerald-100 transition-all">
                                         <div className="flex gap-2 items-start">
-                                            <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" />
+                                            <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
                                             <p className="text-sm text-slate-800 leading-relaxed">
-                                                <span className="bg-blue-100 text-blue-800 font-semibold px-1 rounded">Spearheaded</span> a high-performance sales team of 5, driving a <span className="bg-emerald-100 text-emerald-800 font-semibold px-1 rounded">45% revenue increase</span> YoY to exceed $2M targets.
+                                                <span className="bg-emerald-100 text-emerald-800 font-semibold px-1 rounded">Spearheaded</span> a high-performance sales team of 5, driving a <span className="bg-emerald-100 text-emerald-800 font-semibold px-1 rounded">45% revenue increase</span> YoY to exceed $2M targets.
                                             </p>
                                         </div>
                                     </div>
-                                    <div className="bg-blue-50/50 p-3 -m-3 rounded-lg border border-blue-100 transition-all">
+                                    <div className="bg-emerald-50/50 p-3 -m-3 rounded-lg border border-emerald-100 transition-all">
                                         <div className="flex gap-2 items-start">
-                                            <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" />
+                                            <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
                                             <p className="text-sm text-slate-800 leading-relaxed">
                                                 Recruited and onboarded 8 new hires, implementing a standardized training program that reduced ramp-up time by <span className="bg-emerald-100 text-emerald-800 font-semibold px-1 rounded">30%</span>.
                                             </p>

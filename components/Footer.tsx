@@ -1,5 +1,7 @@
+
 import React from 'react';
 import { toast } from 'sonner';
+import { Zap, Globe, Users, Shield, ArrowUpRight } from 'lucide-react';
 
 const footerLinks = [
   {
@@ -8,6 +10,7 @@ const footerLinks = [
       { name: 'Features', href: '#features' },
       { name: 'Templates', href: '#templates' },
       { name: 'AI Writer', href: '#ai-writer' },
+      { name: 'Pricing', href: '#pricing' },
     ],
   },
   {
@@ -16,6 +19,7 @@ const footerLinks = [
       { name: 'About', href: '#about' },
       { name: 'Careers', href: '#careers' },
       { name: 'Press', href: '#press' },
+      { name: 'Contact', href: '#contact' },
     ],
   },
   {
@@ -24,6 +28,7 @@ const footerLinks = [
       { name: 'Blog', href: '#blog' },
       { name: 'Guides', href: '#guides' },
       { name: 'Support', href: '#support' },
+      { name: 'API Docs', href: '#api' },
     ],
   },
   {
@@ -31,7 +36,7 @@ const footerLinks = [
     links: [
       { name: 'Privacy', href: '#privacy' },
       { name: 'Terms', href: '#terms' },
-      { name: 'Cookie Policy', href: '#cookie-policy' },
+      { name: 'Security', href: '#security' },
     ],
   },
 ];
@@ -50,27 +55,50 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="py-20 bg-white border-t border-slate-200">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-12 mb-20">
-          <div className="col-span-2 md:col-span-1">
-            <div className="text-2xl font-black tracking-tighter text-slate-900 mb-6">HuntDesk</div>
-            <p className="text-slate-500 text-sm">
-              The modern way to build your resume and land your dream job.
+    <footer className="py-24 bg-slate-50 border-t border-slate-200 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-12 mb-16 lg:mb-24">
+          <div className="col-span-2">
+            <div className="flex items-center gap-3 mb-6 group cursor-pointer">
+                <div className="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center transition-all group-hover:bg-slate-800 shadow-sm">
+                    <Zap className="w-4 h-4 text-emerald-400 fill-emerald-400" />
+                </div>
+                <span className="text-xl font-semibold text-slate-900 tracking-tight">HuntDesk</span>
+            </div>
+            <p className="text-slate-500 text-[15px] font-normal leading-relaxed max-w-xs mb-8">
+              The modern platform for career development. Engineered for performance, built for clarity.
             </p>
+            <div className="flex items-center gap-3">
+                {[
+                    { icon: Globe, href: '#' },
+                    { icon: Users, href: '#' },
+                    { icon: Zap, href: '#' },
+                    { icon: Shield, href: '#' }
+                ].map((social, i) => (
+                    <a 
+                        key={i} 
+                        href={social.href}
+                        className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-200 transition-all"
+                    >
+                        <social.icon className="w-4 h-4" />
+                    </a>
+                ))}
+            </div>
           </div>
+          
           {footerLinks.map((section) => (
             <div key={section.title}>
-              <h4 className="text-sm font-bold text-slate-900 mb-6">{section.title}</h4>
-              <ul className="space-y-4">
+              <h4 className="text-sm font-semibold text-slate-900 mb-6">{section.title}</h4>
+              <ul className="space-y-3">
                 {section.links.map((link) => (
                   <li key={link.name}>
                     <a 
                       href={link.href} 
                       onClick={(e) => handleLinkClick(e, link.name, link.href)}
-                      className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
+                      className="text-[15px] font-normal text-slate-500 hover:text-slate-900 transition-colors flex items-center gap-1 group"
                     >
                       {link.name}
+                      <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </a>
                   </li>
                 ))}
@@ -78,17 +106,22 @@ const Footer: React.FC = () => {
             </div>
           ))}
         </div>
+        
         <div className="pt-8 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-sm text-slate-500">
+          <div className="text-[14px] font-normal text-slate-500">
             © 2026 HuntDesk Inc. All rights reserved.
           </div>
           <div className="flex items-center gap-6">
-            <a href="#" onClick={(e) => handleLinkClick(e, 'Twitter', '#')} className="text-sm text-slate-500 hover:text-slate-900 transition-colors">Twitter</a>
-            <a href="#" onClick={(e) => handleLinkClick(e, 'LinkedIn', '#')} className="text-sm text-slate-500 hover:text-slate-900 transition-colors">LinkedIn</a>
-            <a href="#" onClick={(e) => handleLinkClick(e, 'Instagram', '#')} className="text-sm text-slate-500 hover:text-slate-900 transition-colors">Instagram</a>
+            <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[14px] font-medium text-slate-600">All systems operational</span>
+            </div>
           </div>
         </div>
       </div>
+      
+      {/* Decorative background element */}
+      <div className="absolute bottom-0 right-0 w-1/3 h-1/2 bg-emerald-500/5 blur-[120px] -z-0" />
     </footer>
   );
 };

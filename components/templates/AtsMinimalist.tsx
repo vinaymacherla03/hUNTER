@@ -23,7 +23,10 @@ const AtsMinimalist: React.FC<TemplateProps> = ({ data, sectionOrder, customizat
     marginBottom: '8px',
     marginTop: '20px',
     fontWeight: 'bold',
-    borderBottom: '1px solid #eee',
+    borderBottom: customization.sectionTitleBorderStyle === 'underline' || customization.sectionTitleBorderStyle === 'full' ? '1px solid currentColor' : 'none',
+    borderTop: customization.sectionTitleBorderStyle === 'overline' || customization.sectionTitleBorderStyle === 'full' ? '1px solid currentColor' : 'none',
+    paddingBottom: customization.sectionTitleBorderStyle === 'underline' || customization.sectionTitleBorderStyle === 'full' ? '4px' : '0',
+    paddingTop: customization.sectionTitleBorderStyle === 'overline' || customization.sectionTitleBorderStyle === 'full' ? '4px' : '0',
   };
 
   const sections: Record<ResumeSectionKey, React.ReactNode> = {
@@ -38,7 +41,7 @@ const AtsMinimalist: React.FC<TemplateProps> = ({ data, sectionOrder, customizat
         <h2 style={sectionTitleStyle}>Experience</h2>
         <EditableList items={data.experience || []} path="experience" onChange={onDataChange} newItem={{ id: '', role: 'Role', company: 'Company', location: 'Location', dates: 'Dates', description: ['Achievement'] }}>
           {(exp, i) => (
-            <div key={exp.id} className="mb-4 last:mb-0" style={{ pageBreakInside: 'avoid' }}>
+            <div key={`${exp.id || 'exp'}-${i}`} className="mb-4 last:mb-0" style={{ pageBreakInside: 'avoid' }}>
               <div className="flex justify-between items-baseline gap-4">
                 <EditableField path={`experience[${i}].company`} value={exp.company} onChange={onDataChange} className="font-bold text-black text-[10.5pt] flex-1" />
                 <EditableField path={`experience[${i}].dates`} value={exp.dates} onChange={onDataChange} className="text-black text-[10pt] font-bold shrink-0" />
@@ -47,7 +50,7 @@ const AtsMinimalist: React.FC<TemplateProps> = ({ data, sectionOrder, customizat
                 <EditableField path={`experience[${i}].role`} value={exp.role} onChange={onDataChange} className="italic text-black text-[10pt] block flex-1" />
                 <EditableField path={`experience[${i}].location`} value={exp.location} onChange={onDataChange} className="text-black text-[10pt] italic shrink-0" />
               </div>
-              <EditableList items={exp.description} path={`experience[${i}].description`} onChange={onDataChange} newItem="New achievement" className="list-disc ml-5 space-y-0.5">
+              <EditableList items={exp.description || []} path={`experience[${i}].description`} onChange={onDataChange} newItem="New achievement" className="list-disc ml-5 space-y-0.5">
                 {(desc, di) => (
                     <div className="text-black text-[10pt] leading-normal">
                         <EditableField as="div" path={`experience[${i}].description[${di}]`} value={desc} onChange={onDataChange} enableMarkdown />
@@ -63,10 +66,10 @@ const AtsMinimalist: React.FC<TemplateProps> = ({ data, sectionOrder, customizat
       <section key="skills" className="mb-4">
         <h2 style={sectionTitleStyle}>Skills</h2>
         <div className="mt-1">
-          {data.skills?.map((cat, i) => (
-            <div key={cat.id} className="text-[10pt] text-black leading-normal mb-1">
+          {(data.skills || []).map((cat, i) => (
+            <div key={`${cat.id || 'cat'}-${i}`} className="text-[10pt] text-black leading-normal mb-1">
               <span className="font-bold">{cat.name}: </span>
-              <span>{cat.skills?.map(s => s.name).join(', ')}</span>
+              <span>{(cat.skills || []).map(s => s.name).join(', ')}</span>
             </div>
           ))}
         </div>
@@ -75,8 +78,8 @@ const AtsMinimalist: React.FC<TemplateProps> = ({ data, sectionOrder, customizat
     education: (
         <section key="education" className="mb-4">
           <h2 style={sectionTitleStyle}>Education</h2>
-          {data.education?.map((edu, i) => (
-            <div key={edu.id} className="mb-2 last:mb-0">
+          {(data.education || []).map((edu, i) => (
+            <div key={`${edu.id || 'edu'}-${i}`} className="mb-2 last:mb-0">
               <div className="flex justify-between items-baseline">
                 <EditableField path={`education[${i}].institution`} value={edu.institution} onChange={onDataChange} className="font-bold text-black text-[10.5pt]" />
                 <EditableField path={`education[${i}].graduationDate`} value={edu.graduationDate} onChange={onDataChange} className="text-black text-[10pt] font-bold" />
@@ -92,8 +95,8 @@ const AtsMinimalist: React.FC<TemplateProps> = ({ data, sectionOrder, customizat
     projects: data.projects?.length ? (
         <section key="projects" className="mb-4" style={{ pageBreakInside: 'avoid' }}>
           <h2 style={sectionTitleStyle}>Projects</h2>
-          {data.projects?.map((proj, i) => (
-            <div key={proj.id} className="mb-3 last:mb-0">
+          {(data.projects || []).map((proj, i) => (
+            <div key={`${proj.id || 'proj'}-${i}`} className="mb-3 last:mb-0">
               <div className="flex justify-between items-baseline">
                 <EditableField path={`projects[${i}].name`} value={proj.name} onChange={onDataChange} className="font-bold text-black text-[10.5pt]" />
                 <EditableField path={`projects[${i}].dates`} value={`${proj.startDate || ''} - ${proj.endDate || ''}`} onChange={onDataChange} className="text-black text-[10pt] font-bold" />
@@ -108,8 +111,8 @@ const AtsMinimalist: React.FC<TemplateProps> = ({ data, sectionOrder, customizat
     certifications: data.certifications?.length ? (
         <section key="certifications" className="mb-4" style={{ pageBreakInside: 'avoid' }}>
           <h2 style={sectionTitleStyle}>Certifications</h2>
-          {data.certifications?.map((cert, i) => (
-            <div key={cert.id} className="text-[10pt] text-black leading-normal mb-1">
+          {(data.certifications || []).map((cert, i) => (
+            <div key={`${cert.id || 'cert'}-${i}`} className="text-[10pt] text-black leading-normal mb-1">
               <span className="font-bold">{cert.name}</span>
               {cert.issuer && ` | ${cert.issuer}`}
               {cert.date && ` | ${cert.date}`}
@@ -120,8 +123,8 @@ const AtsMinimalist: React.FC<TemplateProps> = ({ data, sectionOrder, customizat
     awards: data.awards?.length ? (
         <section key="awards" className="mb-4" style={{ pageBreakInside: 'avoid' }}>
           <h2 style={sectionTitleStyle}>Awards</h2>
-          {data.awards?.map((award, i) => (
-            <div key={award.id} className="text-[10pt] text-black leading-normal mb-1">
+          {(data.awards || []).map((award, i) => (
+            <div key={`${award.id || 'award'}-${i}`} className="text-[10pt] text-black leading-normal mb-1">
               <span className="font-bold">{award.name}</span>
               {award.issuer && ` | ${award.issuer}`}
               {award.date && ` | ${award.date}`}
@@ -146,9 +149,9 @@ const AtsMinimalist: React.FC<TemplateProps> = ({ data, sectionOrder, customizat
         <div className="flex justify-center flex-wrap gap-x-3 text-[10pt] text-black font-medium">
             <EditableField path="contactInfo.location" value={data.contactInfo.location} onChange={onDataChange} />
             <EditableField path="contactInfo.phone" value={data.contactInfo.phone} onChange={onDataChange} />
-            <EditableField path="contactInfo.email" value={data.contactInfo.email} onChange={onDataChange} className="text-blue-700" />
+            <EditableField path="contactInfo.email" value={data.contactInfo.email} onChange={onDataChange} className="text-emerald-700" />
             {data.contactInfo.linkedin && (
-                <EditableField path="contactInfo.linkedin" value={data.contactInfo.linkedin} onChange={onDataChange} className="text-blue-700" />
+                <EditableField path="contactInfo.linkedin" value={data.contactInfo.linkedin} onChange={onDataChange} className="text-emerald-700" />
             )}
         </div>
       </header>

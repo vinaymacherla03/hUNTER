@@ -3,9 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ResumeData, JobApplication } from '../../types';
 import { generateTailoredResume } from '../../services/geminiService';
-import SparkleIcon from '../icons/SparkleIcon';
 import DownloadDropdown from '../DownloadDropdown';
 import PremiumButton from './PremiumButton';
+import SparkleIcon from '../icons/SparkleIcon';
 
 interface SmartApplyModalProps {
     job: JobApplication;
@@ -13,7 +13,7 @@ interface SmartApplyModalProps {
     onClose: () => void;
 }
 
-const SmartApplyModal: React.FC<SmartApplyModalProps> = ({ job, resumeData, onClose }) => {
+const SmartApplyModal = React.forwardRef<HTMLDivElement, SmartApplyModalProps>(({ job, resumeData, onClose }, ref) => {
     const [step, setStep] = useState<'analyzing' | 'tailoring' | 'ready'>('analyzing');
     const [tailoredResume, setTailoredResume] = useState<ResumeData | null>(null);
     const [rationale, setRationale] = useState<string>('');
@@ -42,11 +42,16 @@ const SmartApplyModal: React.FC<SmartApplyModalProps> = ({ job, resumeData, onCl
     }, [job, resumeData]);
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+        <motion.div 
+            ref={ref}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4" 
+            role="dialog" 
+            aria-modal="true"
+        >
+            <div
                 className="absolute inset-0 bg-black/60 backdrop-blur-sm"
                 onClick={onClose}
             />
@@ -58,7 +63,7 @@ const SmartApplyModal: React.FC<SmartApplyModalProps> = ({ job, resumeData, onCl
                 className="relative z-10 w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col"
             >
                 {/* Header with Gradient */}
-                <div className="bg-gradient-to-r from-teal-600 to-emerald-600 p-6 text-white text-center relative overflow-hidden">
+                <div className="bg-gradient-to-r from-emerald-600 to-emerald-600 p-6 text-white text-center relative overflow-hidden">
                     <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
                     <div className="relative z-10">
                         <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3 backdrop-blur-md">
@@ -83,8 +88,8 @@ const SmartApplyModal: React.FC<SmartApplyModalProps> = ({ job, resumeData, onCl
                         <div className="text-center py-8">
                             <div className="flex justify-center gap-2 mb-6">
                                 <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1 }} className="w-3 h-3 bg-emerald-500 rounded-full" />
-                                <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-3 h-3 bg-teal-500 rounded-full" />
-                                <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-3 h-3 bg-teal-400 rounded-full" />
+                                <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-3 h-3 bg-emerald-500 rounded-full" />
+                                <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-3 h-3 bg-emerald-400 rounded-full" />
                             </div>
                             <h3 className="text-lg font-bold text-slate-800 mb-2">
                                 {step === 'analyzing' ? 'Analyzing Job Description...' : 'Tailoring Your Experience...'}
@@ -155,8 +160,10 @@ const SmartApplyModal: React.FC<SmartApplyModalProps> = ({ job, resumeData, onCl
                     </div>
                 )}
             </motion.div>
-        </div>
+        </motion.div>
     );
-};
+});
+
+SmartApplyModal.displayName = 'SmartApplyModal';
 
 export default SmartApplyModal;

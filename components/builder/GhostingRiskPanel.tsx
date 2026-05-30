@@ -109,7 +109,7 @@ const GhostingRiskPanel: React.FC = () => {
                                     <h3 className="text-7xl font-black tracking-tighter italic mb-4">{risk.riskLevel}</h3>
                                     <div className="flex gap-2">
                                         {Array.from({ length: 3 }).map((_, i) => (
-                                            <div key={i} className={`w-3 h-3 rounded-full ${i < (risk.riskLevel === 'High' ? 3 : risk.riskLevel === 'Medium' ? 2 : 1) ? 'bg-current' : 'bg-slate-200'}`}></div>
+                                            <div key={`risk-dot-${i}`} className={`w-3 h-3 rounded-full ${i < (risk.riskLevel === 'High' ? 3 : risk.riskLevel === 'Medium' ? 2 : 1) ? 'bg-current' : 'bg-slate-200'}`}></div>
                                         ))}
                                     </div>
                                 </div>
@@ -122,7 +122,7 @@ const GhostingRiskPanel: React.FC = () => {
                                     </h4>
                                     <div className="grid grid-cols-1 gap-3">
                                         {risk.reasons.map((reason, i) => (
-                                            <div key={i} className="p-5 bg-white border-2 border-slate-50 rounded-2xl flex gap-4 items-center">
+                                            <div key={`reason-${i}-${reason.substring(0, 20)}`} className="p-5 bg-white border-2 border-slate-50 rounded-2xl flex gap-4 items-center">
                                                 <div className="w-2 h-2 rounded-full bg-slate-900 shrink-0"></div>
                                                 <p className="text-sm font-bold text-slate-700 italic">"{reason}"</p>
                                             </div>

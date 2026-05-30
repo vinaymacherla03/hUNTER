@@ -2,122 +2,81 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ResumeInput from './ResumeInput';
-
-// Fix for missing Jest types in this context
-declare const jest: any;
-declare const describe: any;
-declare const it: any;
-declare const beforeEach: any;
-declare const expect: any;
+import { vi, describe, it, beforeEach, expect } from 'vitest';
 
 describe('ResumeInput Component', () => {
-  const mockOnEnhance = jest.fn();
-  const mockOnTryDemo = jest.fn();
-  const mockOnLoadDraft = jest.fn();
+  const mockOnEnhance = vi.fn();
+  const mockOnTryDemo = vi.fn();
+  const mockOnLoadDraft = vi.fn();
+  const mockOnStartFromScratch = vi.fn();
+
+  const defaultProps = {
+    onEnhance: mockOnEnhance,
+    onTryDemo: mockOnTryDemo,
+    draftExists: false,
+    onLoadDraft: mockOnLoadDraft,
+    onStartFromScratch: mockOnStartFromScratch
+  };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders initial state correctly', () => {
-    render(
-      <ResumeInput 
-        onEnhance={mockOnEnhance} 
-        onTryDemo={mockOnTryDemo} 
-        draftExists={false} 
-        onLoadDraft={mockOnLoadDraft} 
-      />
-    );
-
-    expect(screen.getByText('Create Your Resume')).toBeInTheDocument();
-    // Check for the Paste Resume tab being active by default
-    expect(screen.getByPlaceholderText(/Simply paste your entire resume here/i)).toBeInTheDocument();
+    render(<ResumeInput {...defaultProps} />);
+    expect(screen.getByText(/How do you want to start\?/i)).toBeInTheDocument();
+    expect(screen.getByText(/Match my uploaded resume/i)).toBeInTheDocument();
+    expect(screen.getByText(/Start from scratch/i)).toBeInTheDocument();
   });
 
-  it('switches between Resume and Job tabs', () => {
-    render(
-      <ResumeInput 
-        onEnhance={mockOnEnhance} 
-        onTryDemo={mockOnTryDemo} 
-        draftExists={false} 
-        onLoadDraft={mockOnLoadDraft} 
-      />
-    );
-
-    const jobTabButton = screen.getByText(/Add Job Description/i);
-    fireEvent.click(jobTabButton);
-
-    // Check if job description textarea is visible
-    expect(screen.getByPlaceholderText(/For a resume that's 90%\+ tailored/i)).toBeInTheDocument();
+  it('navigates to input step and calls onEnhance with correct data', async () => {
+    render(<ResumeInput {...defaultProps} />);
     
-    const resumeTabButton = screen.getByText(/Paste Your Resume/i);
-    fireEvent.click(resumeTabButton);
+    // Select "Match my uploaded resume"
+    const matchOption = screen.getByText(/Match my uploaded resume/i).closest('button');
+    fireEvent.click(matchOption!);
     
-    // Check if resume textarea is visible again
-    expect(screen.getByPlaceholderText(/Simply paste your entire resume here/i)).toBeInTheDocument();
-  });
-
-  it('displays error when enhancing without resume text', () => {
-    render(
-      <ResumeInput 
-        onEnhance={mockOnEnhance} 
-        onTryDemo={mockOnTryDemo} 
-        draftExists={false} 
-        onLoadDraft={mockOnLoadDraft} 
-      />
-    );
-
-    const enhanceButton = screen.getByText('Enhance My Resume');
-    fireEvent.click(enhanceButton);
-
-    expect(screen.getByText('Please paste your resume text before enhancing.')).toBeInTheDocument();
-    expect(mockOnEnhance).not.toHaveBeenCalled();
-  });
-
-  it('calls onEnhance with correct data when form is submitted', () => {
-    render(
-      <ResumeInput 
-        onEnhance={mockOnEnhance} 
-        onTryDemo={mockOnTryDemo} 
-        draftExists={false} 
-        onLoadDraft={mockOnLoadDraft} 
-      />
-    );
-
-    // Fill in Resume Text
-    const resumeTextarea = screen.getByPlaceholderText(/Simply paste your entire resume here/i);
-    fireEvent.change(resumeTextarea, { target: { value: 'My Resume Content' } });
-
-    // Fill in Job Title
-    const jobTitleInput = screen.getByPlaceholderText(/e.g., Senior Software Engineer/i);
-    fireEvent.change(jobTitleInput, { target: { value: 'Frontend Dev' } });
-
-    // Switch to Job Description and fill it
-    const jobTabButton = screen.getByText(/Add Job Description/i);
-    fireEvent.click(jobTabButton);
+    // Click Next
+    const nextButton = screen.getByText(/Next/i);
+    fireEvent.click(nextButton);
     
-    const jobDescTextarea = screen.getByPlaceholderText(/For a resume that's 90%\+ tailored/i);
-    fireEvent.change(jobDescTextarea, { target: { value: 'Job Req Content' } });
+    // Now we should be in the input step - wait for it
+    expect(await screen.findByText(/Upload Resume Content/i)).toBeInTheDocument();
 
-    const enhanceButton = screen.getByText('Enhance My Resume');
-    fireEvent.click(enhanceButton);
+    const jobTitleInput = screen.getByPlaceholderText(/e\.g\. Software Engineer/i);
+    const resumeTextArea = screen.getByPlaceholderText(/Paste your existing resume text here\.\.\./i);
+    const jobDescTextArea = screen.getByPlaceholderText(/Paste the job description to tailor your narrative\.\.\./i);
+    const submitButton = screen.getByText(/Start Transformation/i);
 
-    expect(mockOnEnhance).toHaveBeenCalledWith('My Resume Content', 'Job Req Content', 'Frontend Dev');
+    fireEvent.change(jobTitleInput, { target: { value: 'Software Engineer' } });
+    fireEvent.change(resumeTextArea, { target: { value: 'My resume content' } });
+    fireEvent.change(jobDescTextArea, { target: { value: 'Job description' } });
+
+    fireEvent.click(submitButton);
+
+    expect(mockOnEnhance).toHaveBeenCalledWith('My resume content', 'Job description', 'Software Engineer');
   });
 
-  it('calls onTryDemo when demo button is clicked', () => {
-    render(
-      <ResumeInput 
-        onEnhance={mockOnEnhance} 
-        onTryDemo={mockOnTryDemo} 
-        draftExists={false} 
-        onLoadDraft={mockOnLoadDraft} 
-      />
-    );
-
-    const demoButton = screen.getByText('...or try a demo');
-    fireEvent.click(demoButton);
-
+  it('calls onTryDemo when "Skip for now" is clicked', () => {
+    render(<ResumeInput {...defaultProps} />);
+    const skipButton = screen.getByText(/Skip for now/i);
+    fireEvent.click(skipButton);
+    const skipToDemoBtn = screen.getByText(/Yes, Skip to Demo/i);
+    fireEvent.click(skipToDemoBtn);
     expect(mockOnTryDemo).toHaveBeenCalled();
+  });
+
+  it('calls onStartFromScratch when "Start from scratch" is selected and Next is clicked', () => {
+    render(<ResumeInput {...defaultProps} />);
+    
+    // Select "Start from scratch"
+    const scratchOption = screen.getByText(/Start from scratch/i).closest('button');
+    fireEvent.click(scratchOption!);
+    
+    // Click Next
+    const nextButton = screen.getByText(/Next/i);
+    fireEvent.click(nextButton);
+    
+    expect(mockOnStartFromScratch).toHaveBeenCalled();
   });
 });

@@ -1,18 +1,21 @@
 
 import React, { useState } from 'react';
+import { Wand2 } from 'lucide-react';
 import { ResumeData } from '../../../types';
 import FormField from '../FormField';
 import SparkleIcon from '../../icons/SparkleIcon';
 import RewriteSuggestionModal from '../RewriteSuggestionModal';
+import Tooltip from '../../Tooltip';
 import { generateAgentSuggestion } from '../../../services/geminiService';
 
 interface Props {
   data: ResumeData;
   onDataChange: (path: string, value: any) => void;
   jobDescription: string;
+  onSmartTailor?: () => void;
 }
 
-const SummaryForm: React.FC<Props> = ({ data, onDataChange, jobDescription }) => {
+const SummaryForm: React.FC<Props> = ({ data, onDataChange, jobDescription, onSmartTailor }) => {
   const [modalState, setModalState] = useState<{ isOpen: boolean; originalText: string; suggestion: string; reason: string; path: string; } | null>(null);
   const [isThinking, setIsThinking] = useState(false);
 
@@ -44,27 +47,45 @@ const SummaryForm: React.FC<Props> = ({ data, onDataChange, jobDescription }) =>
     };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-2">
-        <h2 className="text-2xl font-bold font-display text-slate-900">Professional Summary</h2>
-         <button
-            type="button"
-            onClick={handleRewrite}
-            disabled={isThinking}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full text-primary-700 bg-primary-100 hover:bg-primary-200 transition-colors disabled:opacity-60"
-        >
+    <div className="space-y-6">
+      <div className="flex justify-between items-center mb-8">
+        <div>
+            <h1 className="text-[28px] font-black text-slate-900 tracking-tight mb-2 leading-tight">Professional Summary</h1>
+            <p className="text-[15px] text-slate-500 font-medium">Write a 3-4 sentence summary that highlights your key skills and trajectory.</p>
+        </div>
+        <div className="flex flex-col gap-2">
+            {onSmartTailor && jobDescription.trim() && (
+                <Tooltip content="Automatically rewrite your professional summary to match the target job description" position="bottom">
+                    <button
+                        type="button"
+                        onClick={onSmartTailor}
+                        className="flex items-center gap-2 px-5 py-2 bg-violet-50/80 text-violet-600 rounded-xl text-[11px] font-black uppercase tracking-[0.15em] hover:bg-violet-100 transition-all border border-violet-100 shadow-[0_4px_10px_-4px_rgba(124,58,237,0.2)] active:scale-95"
+                    >
+                        <Wand2 className="w-4 h-4" />
+                        AI Optimize
+                    </button>
+                </Tooltip>
+            )}
+            <button
+                type="button"
+                onClick={handleRewrite}
+                disabled={isThinking}
+                className="flex items-center gap-1.5 px-4 py-2 text-[11px] font-black uppercase tracking-[0.15em] rounded-xl text-emerald-700 bg-emerald-50/80 hover:bg-emerald-100 border border-emerald-100 shadow-[0_4px_10px_-4px_rgba(16,185,129,0.2)] active:scale-95 transition-all disabled:opacity-60"
+            >
             {isThinking ? (
-                <svg className="animate-spin h-4 w-4 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                <svg className="animate-spin h-4 w-4 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
             ) : (
                 <SparkleIcon className="w-4 h-4" />
             )}
-            <span>Improve with AI</span>
+            <span>Improve</span>
         </button>
+        </div>
       </div>
-      <p className="text-sm text-slate-500 mb-6">Write a 3-4 sentence summary that highlights your key skills, experience, and career goals.</p>
+      
       <FormField 
         as="textarea"
         rows={8}
+        hideLabel
         label="Summary"
         name="summary"
         value={data.summary}

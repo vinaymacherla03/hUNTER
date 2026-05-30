@@ -1,55 +1,51 @@
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'motion/react';
+import { Sparkles, ShieldCheck, Layout, FileDown } from 'lucide-react';
 
-const AILogo = () => (
-  <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="48" height="48" rx="16" fill="#F3E8FF"/>
-    <path d="M24 12C24 18.6274 18.6274 24 12 24C18.6274 24 24 29.3726 24 36C24 29.3726 29.3726 24 36 24C29.3726 24 24 18.6274 24 12Z" fill="#A855F7"/>
-    <path d="M34 14C34 16.7614 32.2091 19 30 19C32.2091 19 34 21.2386 34 24C34 21.2386 35.7909 19 38 19C35.7909 19 34 16.7614 34 14Z" fill="#D8B4FE"/>
-  </svg>
-);
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
+};
 
-const ATSLogo = () => (
-  <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="48" height="48" rx="16" fill="#DCFCE7"/>
-    <path d="M24 12L14 16V24.5C14 30.5 18.5 36 24 38C29.5 36 34 30.5 34 24.5V16L24 12Z" fill="#22C55E"/>
-    <path d="M20 25L23 28L30 19" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: "easeOut",
+    },
+  },
+};
 
-const TemplateLogo = () => (
-  <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="48" height="48" rx="16" fill="#DBEAFE"/>
-    <rect x="14" y="14" width="20" height="20" rx="4" fill="#3B82F6"/>
-    <rect x="18" y="18" width="12" height="3" rx="1.5" fill="#93C5FD"/>
-    <rect x="18" y="24" width="7" height="2" rx="1" fill="#BFDBFE"/>
-    <rect x="18" y="29" width="10" height="2" rx="1" fill="#BFDBFE"/>
-  </svg>
-);
-
-const PDFLogo = () => (
-  <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="48" height="48" rx="16" fill="#FEE2E2"/>
-    <path d="M16 14C16 12.8954 16.8954 12 18 12H25L32 19V34C32 35.1046 31.1046 36 30 36H18C16.8954 36 16 35.1046 16 34V14Z" fill="#EF4444"/>
-    <path d="M25 12V19H32" fill="#FCA5A5"/>
-    <path d="M24 22V29M24 29L21 26M24 29L27 26" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const FeatureCard: React.FC<{ title: string; desc: string; logo: React.ReactNode; className?: string }> = ({ title, desc, logo, className }) => (
+const FeatureCard: React.FC<{ 
+  title: string; 
+  desc: string; 
+  icon: React.ElementType; 
+  color: string; 
+  className?: string 
+}> = ({ title, desc, icon: Icon, color, className }) => (
   <motion.div 
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.5 }}
-    className={`p-10 bg-white rounded-3xl border border-slate-200 flex flex-col group hover:border-slate-300 transition-colors ${className}`}
+    variants={itemVariants}
+    whileHover={{ 
+      y: -8, 
+      boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.1)",
+      borderColor: "rgba(0, 0, 0, 0.1)"
+    }}
+    className={`p-10 bg-white rounded-[2.5rem] border border-slate-100 flex flex-col group transition-all duration-300 ${className}`}
   >
-    <div className="mb-8 group-hover:scale-110 transition-transform origin-left">
-      {logo}
+    <div className={`mb-8 w-16 h-16 rounded-2xl flex items-center justify-center ${color} group-hover:scale-110 transition-transform origin-left`}>
+      <Icon className="w-8 h-8" />
     </div>
-    <h3 className="text-2xl font-bold text-slate-900 mb-3 tracking-tight">{title}</h3>
-    <p className="text-slate-600 leading-relaxed font-medium">{desc}</p>
+    <h3 className="text-2xl font-black text-slate-900 mb-4 tracking-tight uppercase">{title}</h3>
+    <p className="text-slate-600 leading-relaxed font-medium text-lg">{desc}</p>
   </motion.div>
 );
 
@@ -115,30 +111,40 @@ const Features: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+        >
           <FeatureCard 
-            className="md:col-span-2 bg-slate-50"
+            className="md:col-span-2 bg-slate-50/50"
             title="AI Content Generation"
             desc="Stuck on what to write? Our AI analyzes your role and generates tailored bullet points that highlight your achievements and skills."
-            logo={<AILogo />}
+            icon={Sparkles}
+            color="bg-emerald-100 text-emerald-600"
           />
           <FeatureCard 
             title="ATS-Friendly"
             desc="Our templates are designed to pass through Applicant Tracking Systems, ensuring your resume reaches human eyes."
-            logo={<ATSLogo />}
+            icon={ShieldCheck}
+            color="bg-emerald-100 text-emerald-600"
           />
           <FeatureCard 
             title="Modern Templates"
             desc="Choose from a variety of professional, recruiter-approved templates that stand out from the crowd."
-            logo={<TemplateLogo />}
+            icon={Layout}
+            color="bg-emerald-100 text-emerald-600"
           />
           <FeatureCard 
-            className="md:col-span-2 bg-slate-50"
+            className="md:col-span-2 bg-slate-50/50"
             title="Export to PDF"
             desc="Download your pixel-perfect resume as a PDF in one click, ready to be sent to employers or uploaded to job boards."
-            logo={<PDFLogo />}
+            icon={FileDown}
+            color="bg-rose-100 text-rose-600"
           />
-        </div>
+        </motion.div>
       </div>
     </section>
   );

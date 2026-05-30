@@ -34,7 +34,14 @@ const InterviewModal: React.FC<InterviewModalProps> = ({ questions, onClose, com
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+        <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4" 
+            role="dialog" 
+            aria-modal="true"
+        >
              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -49,7 +56,7 @@ const InterviewModal: React.FC<InterviewModalProps> = ({ questions, onClose, com
                 transition={{ duration: 0.3, ease: 'easeOut' }}
                 className="relative z-10 w-full max-w-4xl h-[85vh] flex flex-col bg-white rounded-2xl shadow-2xl overflow-hidden"
             >
-                <div className="bg-gradient-to-r from-violet-600 to-indigo-600 p-6 text-white flex-shrink-0">
+                <div className="bg-gradient-to-r from-emerald-600 to-emerald-600 p-6 text-white flex-shrink-0">
                     <div className="flex justify-between items-start">
                         <div>
                             <div className="flex items-center gap-2 mb-1">
@@ -58,7 +65,7 @@ const InterviewModal: React.FC<InterviewModalProps> = ({ questions, onClose, com
                                 </div>
                                 <h2 className="text-xl font-bold">AI Interview Coach</h2>
                             </div>
-                            <p className="text-violet-100 text-sm">Prep for <strong>{role}</strong> at <strong>{company}</strong></p>
+                            <p className="text-emerald-100 text-sm">Prep for <strong>{role}</strong> at <strong>{company}</strong></p>
                         </div>
                         <button onClick={onClose} className="p-1.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors">
                              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
@@ -73,11 +80,11 @@ const InterviewModal: React.FC<InterviewModalProps> = ({ questions, onClose, com
                         <div className="space-y-3">
                             {questions.map((q, idx) => (
                                 <button 
-                                    key={idx}
+                                    key={`question-${idx}-${q.question.substring(0, 20)}`}
                                     onClick={() => handlePractice(idx)}
-                                    className={`w-full text-left p-3 rounded-xl border transition-all ${practiceMode?.questionIdx === idx ? 'bg-violet-50 border-violet-200 shadow-sm ring-1 ring-violet-200' : 'bg-white border-slate-200 hover:border-violet-200 hover:shadow-sm'}`}
+                                    className={`w-full text-left p-3 rounded-xl border transition-all ${practiceMode?.questionIdx === idx ? 'bg-emerald-50 border-emerald-200 shadow-sm ring-1 ring-emerald-200' : 'bg-white border-slate-200 hover:border-emerald-200 hover:shadow-sm'}`}
                                 >
-                                    <p className={`text-sm font-semibold mb-1 ${practiceMode?.questionIdx === idx ? 'text-violet-700' : 'text-slate-700'}`}>Question {idx + 1}</p>
+                                    <p className={`text-sm font-semibold mb-1 ${practiceMode?.questionIdx === idx ? 'text-emerald-700' : 'text-slate-700'}`}>Question {idx + 1}</p>
                                     <p className="text-xs text-slate-500 line-clamp-2">{q.question}</p>
                                 </button>
                             ))}
@@ -96,7 +103,7 @@ const InterviewModal: React.FC<InterviewModalProps> = ({ questions, onClose, com
                             >
                                 <div className="mb-6">
                                     <div className="flex items-center justify-between mb-3">
-                                        <span className="inline-block px-2 py-1 bg-violet-100 text-violet-700 text-[10px] font-bold uppercase rounded-md">Question {practiceMode.questionIdx + 1}</span>
+                                        <span className="inline-block px-2 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-bold uppercase rounded-md">Question {practiceMode.questionIdx + 1}</span>
                                         <button onClick={() => setPracticeMode(null)} className="text-xs font-bold text-slate-400 hover:text-slate-600 md:hidden">Back to List</button>
                                     </div>
                                     <h3 className="text-lg font-bold text-slate-900 mb-3">{questions[practiceMode.questionIdx].question}</h3>
@@ -126,9 +133,9 @@ const InterviewModal: React.FC<InterviewModalProps> = ({ questions, onClose, com
 
                                         {practiceMode.loading && (
                                             <div className="flex justify-start">
-                                                <div className="bg-violet-50 border border-violet-100 rounded-2xl rounded-tl-none p-4 flex items-center gap-3">
-                                                    <div className="w-5 h-5 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
-                                                    <span className="text-sm font-bold text-violet-700">Analyzing your answer...</span>
+                                                <div className="bg-emerald-50 border border-emerald-100 rounded-2xl rounded-tl-none p-4 flex items-center gap-3">
+                                                    <div className="w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                                                    <span className="text-sm font-bold text-emerald-700">Analyzing your answer...</span>
                                                 </div>
                                             </div>
                                         )}
@@ -161,7 +168,7 @@ const InterviewModal: React.FC<InterviewModalProps> = ({ questions, onClose, com
                                                         <div className="flex justify-end pt-2">
                                                             <button 
                                                                 onClick={() => setPracticeMode(prev => ({ ...prev!, feedback: null, answer: '' }))} 
-                                                                className="text-xs font-bold text-violet-600 hover:text-violet-800 hover:underline"
+                                                                className="text-xs font-bold text-emerald-600 hover:text-emerald-800 hover:underline"
                                                             >
                                                                 Try Another Answer
                                                             </button>
@@ -177,7 +184,7 @@ const InterviewModal: React.FC<InterviewModalProps> = ({ questions, onClose, com
                                             <button 
                                                 onClick={handleSubmitAnswer}
                                                 disabled={!practiceMode.answer.trim()}
-                                                className="px-6 py-2.5 bg-violet-600 text-white font-semibold rounded-full hover:bg-violet-700 disabled:opacity-70 transition-all shadow-lg shadow-violet-200 flex items-center gap-2 transform hover:scale-105 active:scale-95"
+                                                className="px-6 py-2.5 bg-emerald-600 text-white font-semibold rounded-full hover:bg-emerald-700 disabled:opacity-70 transition-all shadow-lg shadow-emerald-200 flex items-center gap-2 transform hover:scale-105 active:scale-95"
                                             >
                                                 <SparkleIcon className="w-4 h-4" />
                                                 Get AI Feedback
@@ -198,7 +205,7 @@ const InterviewModal: React.FC<InterviewModalProps> = ({ questions, onClose, com
                     </AnimatePresence>
                 </div>
             </motion.div>
-        </div>
+        </motion.div>
     );
 };
 

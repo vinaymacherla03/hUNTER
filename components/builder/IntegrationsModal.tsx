@@ -75,7 +75,7 @@ const ApiIcon = () => (
     </div>
 )
 
-const IntegrationsModal: React.FC<IntegrationsModalProps> = ({ onClose }) => {
+const IntegrationsModal = React.forwardRef<HTMLDivElement, IntegrationsModalProps>(({ onClose }, ref) => {
     const [connections, setConnections] = useState({
         google: false,
         jobBoards: false,
@@ -136,11 +136,16 @@ const IntegrationsModal: React.FC<IntegrationsModalProps> = ({ onClose }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
-            <motion.div 
-                initial={{ opacity: 0 }} 
-                animate={{ opacity: 1 }} 
-                exit={{ opacity: 0 }} 
+        <motion.div 
+            ref={ref}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4" 
+            role="dialog" 
+            aria-modal="true"
+        >
+            <div 
                 className="absolute inset-0 bg-black/60 backdrop-blur-sm" 
                 onClick={onClose} 
             />
@@ -188,8 +193,10 @@ const IntegrationsModal: React.FC<IntegrationsModalProps> = ({ onClose }) => {
                     />
                 </div>
             </motion.div>
-        </div>
+        </motion.div>
     );
-};
+});
+
+IntegrationsModal.displayName = 'IntegrationsModal';
 
 export default IntegrationsModal;

@@ -7,20 +7,14 @@ import {
     signOut as _signOut, 
     onAuthStateChanged as _onAuthStateChanged, 
     GoogleAuthProvider, 
-    signInWithPopup as _signInWithPopup
+    signInWithPopup as _signInWithPopup,
+    setPersistence as _setPersistence,
+    browserLocalPersistence,
+    browserSessionPersistence
 } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import type { User } from 'firebase/auth';
-
-// NOTE: Replace these values with your actual Firebase project configuration
-const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY || "YOUR_API_KEY",
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN || "YOUR_AUTH_DOMAIN",
-  projectId: process.env.FIREBASE_PROJECT_ID || "YOUR_PROJECT_ID",
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET || "YOUR_STORAGE_BUCKET",
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || "YOUR_MESSAGING_SENDER_ID",
-  appId: process.env.FIREBASE_APP_ID || "YOUR_APP_ID"
-};
+import firebaseConfig from '../firebase-applet-config.json' with { type: 'json' };
 
 let app;
 let auth: any;
@@ -29,10 +23,10 @@ let isConfigured = false;
 
 try {
     // Check if config is valid (not default placeholders)
-    if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY" && !firebaseConfig.apiKey.includes("API_KEY")) {
+    if (firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("TODO")) {
         app = initializeApp(firebaseConfig);
         auth = getAuth(app);
-        db = getFirestore(app);
+        db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
         isConfigured = true;
     } else {
         console.warn("Firebase configuration missing. Running in MOCK AUTH mode.");
@@ -158,6 +152,15 @@ const signInWithPopup = async (authInstance: any, provider: any) => {
     return { user: mockUser };
 };
 
+const setPersistence = async (authInstance: any, persistence: any) => {
+    if (isConfigured && authInstance) {
+        return _setPersistence(authInstance, persistence);
+    }
+    // Mock Implementation
+    console.log(`Mock setPersistence: ${persistence}`);
+    return Promise.resolve();
+};
+
 export { 
     auth, 
     db,
@@ -166,7 +169,10 @@ export {
     signOut, 
     onAuthStateChanged, 
     GoogleAuthProvider, 
-    signInWithPopup
+    signInWithPopup,
+    setPersistence,
+    browserLocalPersistence,
+    browserSessionPersistence
 };
 
 export type { User };

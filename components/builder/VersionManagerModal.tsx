@@ -1,9 +1,11 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Save, Trash2, Edit2, Check, Clock, FileText, ChevronRight } from 'lucide-react';
+import { X, Save, Trash2, Edit2, Check, Clock, FileText, ChevronRight, GitCompare } from 'lucide-react';
 import { ResumeVersion, ResumeData, Customization, TemplateKey } from '../../types';
 import { useResumeVersions } from '../../hooks/useResumeVersions';
+import ConfirmModal from './ConfirmModal';
+import CompareVersionsModal from './CompareVersionsModal';
 
 interface VersionManagerModalProps {
     isOpen: boolean;
@@ -15,7 +17,7 @@ interface VersionManagerModalProps {
     onLoadVersion: (version: ResumeVersion) => void;
 }
 
-const VersionManagerModal: React.FC<VersionManagerModalProps> = ({
+const VersionManagerModal = React.forwardRef<HTMLDivElement, VersionManagerModalProps>(({
     isOpen,
     onClose,
     currentData,
@@ -23,11 +25,29 @@ const VersionManagerModal: React.FC<VersionManagerModalProps> = ({
     currentTemplate,
     currentJobDescription,
     onLoadVersion
-}) => {
+}, ref) => {
     const { versions, saveVersion, deleteVersion, renameVersion } = useResumeVersions();
     const [newVersionName, setNewVersionName] = useState('');
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editName, setEditName] = useState('');
+    const [compareState, setCompareState] = useState<{ isOpen: boolean; versionData: ResumeData | null; versionName: string }>({
+        isOpen: false,
+        versionData: null,
+        versionName: ''
+    });
+    const [confirmState, setConfirmState] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        onConfirm: () => void;
+        variant: 'danger' | 'primary';
+    }>({
+        isOpen: false,
+        title: '',
+        message: '',
+        onConfirm: () => {},
+        variant: 'primary'
+    });
 
     const handleSave = () => {
         if (!newVersionName.trim()) return;
@@ -41,17 +61,20 @@ const VersionManagerModal: React.FC<VersionManagerModalProps> = ({
         setEditingId(null);
     };
 
-    if (!isOpen) return null;
-
     return (
-        <AnimatePresence>
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[80vh]"
-                >
+        <motion.div 
+            ref={ref}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+        >
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[80vh]"
+                    >
                     <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                         <div>
                             <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
@@ -127,7 +150,7 @@ const VersionManagerModal: React.FC<VersionManagerModalProps> = ({
                                                     <h3 className="font-bold text-slate-900 truncate">{version.name}</h3>
                                                     <p className="text-xs text-slate-400 flex items-center gap-1">
                                                         <Clock className="w-3 h-3" />
-                                                        {new Date(version.timestamp).toLocaleString()}
+                                                        {version.timestamp?.toDate ? version.timestamp.toDate().toLocaleString() : new Date(version.timestamp as any).toLocaleString()}
                                                     </p>
                                                 </div>
                                             </div>
@@ -135,6 +158,19 @@ const VersionManagerModal: React.FC<VersionManagerModalProps> = ({
                                     </div>
 
                                     <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button
+                                            onClick={() => {
+                                                setCompareState({
+                                                    isOpen: true,
+                                                    versionData: version.resumeData,
+                                                    versionName: version.name
+                                                });
+                                            }}
+                                            className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                            title="Compare"
+                                        >
+                                            <GitCompare className="w-4 h-4" />
+                                        </button>
                                         <button
                                             onClick={() => {
                                                 setEditingId(version.id);
@@ -145,19 +181,33 @@ const VersionManagerModal: React.FC<VersionManagerModalProps> = ({
                                         >
                                             <Edit2 className="w-4 h-4" />
                                         </button>
-                                        <button
-                                            onClick={() => deleteVersion(version.id)}
-                                            className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
+                                         <button
+                                            onClick={() => {
+                                                setConfirmState({
+                                                    isOpen: true,
+                                                    title: 'Delete Version',
+                                                    message: `Are you sure you want to delete "${version.name}"? This action cannot be undone.`,
+                                                    onConfirm: () => deleteVersion(version.id),
+                                                    variant: 'danger'
+                                                });
+                                            }}
+                                            className="p-2.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
                                             title="Delete"
                                         >
                                             <Trash2 className="w-4 h-4" />
                                         </button>
                                         <button
                                             onClick={() => {
-                                                if (window.confirm("Load this version? Current unsaved changes will be lost.")) {
-                                                    onLoadVersion(version);
-                                                    onClose();
-                                                }
+                                                setConfirmState({
+                                                    isOpen: true,
+                                                    title: 'Load Version',
+                                                    message: `Load "${version.name}"? Your current unsaved changes will be replaced.`,
+                                                    onConfirm: () => {
+                                                        onLoadVersion(version);
+                                                        onClose();
+                                                    },
+                                                    variant: 'primary'
+                                                });
                                             }}
                                             className="px-4 py-2 bg-white text-emerald-600 border border-emerald-200 rounded-xl font-bold hover:bg-emerald-600 hover:text-white transition-all flex items-center gap-2"
                                         >
@@ -169,10 +219,31 @@ const VersionManagerModal: React.FC<VersionManagerModalProps> = ({
                             ))
                         )}
                     </div>
+
+                    <ConfirmModal 
+                        isOpen={confirmState.isOpen}
+                        title={confirmState.title}
+                        message={confirmState.message}
+                        onConfirm={confirmState.onConfirm}
+                        onCancel={() => setConfirmState(prev => ({ ...prev, isOpen: false }))}
+                        variant={confirmState.variant}
+                        confirmText={confirmState.variant === 'danger' ? 'Delete' : 'Load Version'}
+                    />
                 </motion.div>
-            </div>
-        </AnimatePresence>
+
+                {compareState.isOpen && compareState.versionData && (
+                    <CompareVersionsModal
+                        isOpen={compareState.isOpen}
+                        onClose={() => setCompareState(prev => ({ ...prev, isOpen: false }))}
+                        currentData={currentData}
+                        versionData={compareState.versionData}
+                        versionName={compareState.versionName}
+                    />
+                )}
+        </motion.div>
     );
-};
+});
+
+VersionManagerModal.displayName = 'VersionManagerModal';
 
 export default VersionManagerModal;

@@ -40,6 +40,17 @@ const fontClassMap: Record<FontTheme, string> = {
   'cambria': 'font-cambria',
   'gill-sans': 'font-gill-sans',
   'garamond': 'font-garamond',
+  'dm-sans': 'font-sans',
+  'outfit': 'font-sans',
+  'space-grotesk': 'font-sans',
+  'quicksand': 'font-sans',
+  'cabin': 'font-sans',
+  'pt-sans': 'font-sans',
+  'pt-serif': 'font-serif',
+  'bitter': 'font-serif',
+  'libre-baserville': 'font-serif',
+  'noto-sans': 'font-sans',
+  'noto-serif': 'font-serif',
 };
 
 const colorVarMap: Record<ColorTheme, React.CSSProperties> = {
@@ -50,6 +61,15 @@ const colorVarMap: Record<ColorTheme, React.CSSProperties> = {
   slate: { '--primary-color': '#475569', '--primary-color-light': '#f1f5f9', '--primary-color-dark': '#334155', '--text-on-primary': '#ffffff' } as React.CSSProperties,
   orange: { '--primary-color': '#f97316', '--primary-color-light': '#ffedd5', '--primary-color-dark': '#ea580c', '--text-on-primary': '#ffffff' } as React.CSSProperties,
   amber: { '--primary-color': '#f59e0b', '--primary-color-light': '#fef3c7', '--primary-color-dark': '#d97706', '--text-on-primary': '#ffffff' } as React.CSSProperties,
+  violet: { '--primary-color': '#8b5cf6', '--primary-color-light': '#ede9fe', '--primary-color-dark': '#6d28d9', '--text-on-primary': '#ffffff' } as React.CSSProperties,
+  fuchsia: { '--primary-color': '#d946ef', '--primary-color-light': '#fae8ff', '--primary-color-dark': '#a21caf', '--text-on-primary': '#ffffff' } as React.CSSProperties,
+  pink: { '--primary-color': '#ec4899', '--primary-color-light': '#fce7f3', '--primary-color-dark': '#be185d', '--text-on-primary': '#ffffff' } as React.CSSProperties,
+  cyan: { '--primary-color': '#06b6d4', '--primary-color-light': '#cffafe', '--primary-color-dark': '#0e7490', '--text-on-primary': '#ffffff' } as React.CSSProperties,
+  teal: { '--primary-color': '#14b8a6', '--primary-color-light': '#ccfbf1', '--primary-color-dark': '#0f766e', '--text-on-primary': '#ffffff' } as React.CSSProperties,
+  lime: { '--primary-color': '#84cc16', '--primary-color-light': '#ecfccb', '--primary-color-dark': '#4d7c0f', '--text-on-primary': '#ffffff' } as React.CSSProperties,
+  yellow: { '--primary-color': '#eab308', '--primary-color-light': '#fef9c3', '--primary-color-dark': '#a16207', '--text-on-primary': '#ffffff' } as React.CSSProperties,
+  red: { '--primary-color': '#ef4444', '--primary-color-light': '#fee2e2', '--primary-color-dark': '#b91c1c', '--text-on-primary': '#ffffff' } as React.CSSProperties,
+  black: { '--primary-color': '#000000', '--primary-color-light': '#e2e8f0', '--primary-color-dark': '#000000', '--text-on-primary': '#ffffff' } as React.CSSProperties,
 };
 
 const defaultCustomization: Customization = {
@@ -75,7 +95,13 @@ const TemplatePreviewModal: React.FC<TemplatePreviewModalProps> = ({ template, r
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm" onClick={onClose}>
+        <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm" 
+            onClick={onClose}
+        >
             <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -111,7 +137,7 @@ const TemplatePreviewModal: React.FC<TemplatePreviewModalProps> = ({ template, r
                     </div>
                 </main>
             </motion.div>
-        </div>
+        </motion.div>
     );
 };
 

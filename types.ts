@@ -3,8 +3,8 @@ export type TemplateKey = string;
 
 export type ResumeSectionKey = 'summary' | 'experience' | 'projects' | 'education' | 'certifications' | 'skills' | 'awards' | 'keywords';
 
-export type ColorTheme = 'indigo' | 'blue' | 'emerald' | 'rose' | 'slate' | 'orange' | 'amber';
-export type FontTheme = 'times-new-roman' | 'tahoma' | 'verdana' | 'arial' | 'helvetica' | 'calibri' | 'georgia' | 'cambria' | 'gill-sans' | 'garamond' | 'inter' | 'roboto' | 'lato' | 'montserrat' | 'source-sans' | 'lora' | 'roboto-mono' | 'jakarta' | 'playfair' | 'open-sans' | 'poppins' | 'merriweather' | 'nunito' | 'oswald' | 'raleway' | 'crimson-pro' | 'work-sans' | 'jetbrains-mono';
+export type ColorTheme = 'indigo' | 'blue' | 'emerald' | 'rose' | 'slate' | 'orange' | 'amber' | 'violet' | 'fuchsia' | 'pink' | 'cyan' | 'teal' | 'lime' | 'yellow' | 'red' | 'black';
+export type FontTheme = 'times-new-roman' | 'tahoma' | 'verdana' | 'arial' | 'helvetica' | 'calibri' | 'georgia' | 'cambria' | 'gill-sans' | 'garamond' | 'inter' | 'roboto' | 'lato' | 'montserrat' | 'source-sans' | 'lora' | 'roboto-mono' | 'jakarta' | 'playfair' | 'open-sans' | 'poppins' | 'merriweather' | 'nunito' | 'oswald' | 'raleway' | 'crimson-pro' | 'work-sans' | 'jetbrains-mono' | 'dm-sans' | 'outfit' | 'space-grotesk' | 'quicksand' | 'cabin' | 'pt-sans' | 'pt-serif' | 'bitter' | 'libre-baserville' | 'noto-sans' | 'noto-serif';
 export type MarginTheme = 'compact' | 'normal' | 'spacious';
 export type PageFormat = 'A4' | 'LETTER';
 
@@ -26,6 +26,7 @@ export interface Customization {
     sectionTitleBorderStyle: 'none' | 'underline' | 'overline' | 'full';
     sectionTitleBorderColor: string;
     sectionTitleUppercase: boolean;
+    fitToOnePage?: boolean;
 }
 
 export interface ContactInfo {
@@ -35,6 +36,7 @@ export interface ContactInfo {
     location: string;
     github?: string;
     portfolio?: string;
+    website?: string;
 }
 
 export interface Experience {
@@ -105,12 +107,14 @@ export interface SuggestedSkill {
 export interface KeywordAnalysis {
   presentKeywords: string[];
   missingKeywords: string[];
+  detectedJobTitle?: string;
 }
 
 export interface AuditResult {
     overallScore: number;
+    atsScore?: number; // Specific score for ATS parsability (e.g., OpenCATS)
     feedback: {
-        category: 'Impact' | 'Quantification' | 'Conciseness' | 'Skills';
+        category: 'Impact' | 'Quantification' | 'Conciseness' | 'Skills' | 'ATS Parsability' | 'OpenCATS Compatibility';
         message: string;
         suggestion?: string;
         contextPath?: string; // e.g., 'experience[1].description[2]'
@@ -118,14 +122,23 @@ export interface AuditResult {
 }
 
 
+export type AIMode = 'Standard' | 'Technical' | 'Leadership' | 'Creative' | 'Executive' | 'Entry-Level';
+
+export interface JobEvaluation {
+    overallScore: number;
+    matchDetails: string;
+    pros: string[];
+    cons: string[];
+    marketInsights: string;
+}
+
 export interface ResumeVersion {
     id: string;
+    userId?: string;
     name: string;
-    timestamp: number;
-    data: ResumeData;
-    customization: Customization;
-    template: TemplateKey;
-    jobDescription?: string;
+    timestamp: any; // Can be number (localStorage) or Firestore Timestamp
+    resumeData: ResumeData;
+    isAutoSave?: boolean;
 }
 
 export interface ResumeData {
@@ -142,8 +155,27 @@ export interface ResumeData {
     keywords?: string[];
 }
 
+export interface JobContact {
+    id: string;
+    name: string;
+    role: string;
+    email?: string;
+    phone?: string;
+    linkedin?: string;
+    notes?: string;
+}
+
+export interface JobTask {
+    id: string;
+    title: string;
+    dueDate?: string;
+    completed: boolean;
+    priority: 'low' | 'medium' | 'high';
+}
+
 export interface JobApplication {
     id: string;
+    userId: string;
     company: string;
     role: string;
     status: 'Saved' | 'Applied' | 'Interviewing' | 'Offer' | 'Rejected';
@@ -153,6 +185,21 @@ export interface JobApplication {
     location?: string;
     salary?: string;
     source?: string;
+    contacts?: JobContact[];
+    tasks?: JobTask[];
+    notes?: string;
+    lastInteraction?: string;
+    companyUrl?: string;
+    companyLogo?: string;
+}
+
+export interface JobSearchFilters {
+    experienceLevel?: 'Entry' | 'Mid' | 'Senior' | 'Executive' | 'Any' | '0-2 years' | '2-5 years' | '5-10 years' | '10+ years';
+    employmentType?: 'Full-time' | 'Part-time' | 'Contract' | 'Internship' | 'Any' | 'Temporary' | 'Volunteer';
+    remoteOption?: 'Remote' | 'On-site' | 'Hybrid' | 'Any';
+    datePosted?: 'Past 24h' | 'Past 3 days' | 'Past week' | 'Past month' | 'Any';
+    minSalary?: number;
+    technologies?: string[];
 }
 
 export interface JobListing {

@@ -57,7 +57,7 @@ const CareerRoadmapPanel: React.FC<CareerRoadmapPanelProps> = ({ resumeData }) =
                     <ul className="space-y-2">
                         {skillGaps.map((skill, index) => (
                             <li key={index} className="flex items-center gap-3 text-sm text-slate-700 font-medium">
-                                <span className="w-2 h-2 rounded-full bg-teal-500 shrink-0" />
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
                                 {skill}
                             </li>
                         ))}

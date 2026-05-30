@@ -68,7 +68,14 @@ const NetworkingModal: React.FC<NetworkingModalProps> = ({ email, onClose, compa
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+        <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4" 
+            role="dialog" 
+            aria-modal="true"
+        >
              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -84,7 +91,7 @@ const NetworkingModal: React.FC<NetworkingModalProps> = ({ email, onClose, compa
                 className="relative z-10 w-full max-w-2xl flex flex-col bg-white rounded-2xl shadow-2xl overflow-hidden"
             >
                 {/* Header */}
-                <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 p-6 text-white">
+                <div className="bg-gradient-to-r from-emerald-600 via-emerald-600 to-emerald-600 p-6 text-white">
                     <div className="flex justify-between items-start">
                         <div>
                             <div className="flex items-center gap-3 mb-1">
@@ -128,7 +135,7 @@ const NetworkingModal: React.FC<NetworkingModalProps> = ({ email, onClose, compa
                                     type="email" 
                                     value={recipient} 
                                     onChange={(e) => setRecipient(e.target.value)}
-                                    className="w-full text-sm p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none"
+                                    className="w-full text-sm p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
                                     placeholder="recruiter@company.com"
                                 />
                             </div>
@@ -178,7 +185,7 @@ const NetworkingModal: React.FC<NetworkingModalProps> = ({ email, onClose, compa
                                 className={`px-6 py-2.5 text-white rounded-lg font-bold text-xs transition-all shadow-md flex items-center gap-2 ${
                                     sendingStatus === 'sent' ? 'bg-emerald-500' :
                                     sendingStatus === 'error' ? 'bg-red-500' :
-                                    'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700'
+                                    'bg-gradient-to-r from-emerald-600 to-emerald-600 hover:from-emerald-700 hover:to-emerald-700'
                                 }`}
                             >
                                 {sendingStatus === 'sending' ? (
@@ -212,7 +219,7 @@ const NetworkingModal: React.FC<NetworkingModalProps> = ({ email, onClose, compa
                     </div>
                 </div>
             </motion.div>
-        </div>
+        </motion.div>
     );
 };
 

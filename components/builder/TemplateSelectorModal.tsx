@@ -12,9 +12,15 @@ interface TemplateSelectorModalProps {
     onClose: () => void;
 }
 
-const TemplateSelectorModal: React.FC<TemplateSelectorModalProps> = ({ currentTemplate, resumeData, onTemplateChange, onClose }) => {
+const TemplateSelectorModal = React.forwardRef<HTMLDivElement, TemplateSelectorModalProps>(({ currentTemplate, resumeData, onTemplateChange, onClose }, ref) => {
     return (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+        <motion.div 
+            ref={ref}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm"
+        >
             <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -52,8 +58,10 @@ const TemplateSelectorModal: React.FC<TemplateSelectorModalProps> = ({ currentTe
                     </button>
                 </footer>
             </motion.div>
-        </div>
+        </motion.div>
     );
-};
+});
+
+TemplateSelectorModal.displayName = 'TemplateSelectorModal';
 
 export default TemplateSelectorModal;
